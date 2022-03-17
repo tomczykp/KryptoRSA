@@ -1,0 +1,30 @@
+* {
+    -fx-spacing: 10;
+    fx-font-family: 'Helvetica', Arial, sans-serif;
+}
+
+.menu {
+    -fx-padding: 10px 20px 10px 20px;
+    -fx-spacing: 20;
+    fx-font-family: 'Helvetica', Arial, sans-serif;
+}
+
+.h1 {
+    -fx-font-size: 22px;
+}
+
+.box Label {
+    -fx-font-size: 18px;
+}
+
+.section {
+    -fx-padding: 0px 0px 20px 0px;
+    -fx-border-color: #111111;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+    -fx-padding: 20px;
+}
+
+
+
+
