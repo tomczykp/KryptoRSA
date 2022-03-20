@@ -1,6 +1,5 @@
 package xyz.kryptografia.rsa;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -350,4 +349,74 @@ public class Num implements Comparable<Num> {
         return tmp;
     }
 
+    public static Num divide(Num x, Num y) {
+        if (y.isZero())
+            throw new ArithmeticException();
+
+        if (x.isZero())
+            return new Num();
+
+        int sx = x.liczba.size();
+        int sy = y.liczba.size();
+        if (sy > sx) // dzielenie przez większą liczbę
+            return new Num();
+
+        Num wynik = new Num();
+        Num tmp = new Num();
+        int n;
+        boolean d;
+
+        for (int i = sx-1; i >= 0; i--) {
+
+            d = true;
+            tmp = Num.add(tmp, x.get(i));
+
+            if (tmp.compareTo(y) >= 0) {
+                d = false;
+                n = 1;
+                while (true) {
+                    Num s = Num.mulKaratsuba(y, n);
+                    int t = s.compareTo(tmp);
+
+                    if (t == 0)
+                        break;
+                    else if (t > 0) {
+                        n--;
+                        break;
+                    } else
+                        n++;
+                }
+
+                wynik.liczba.add(0, n);
+                tmp = Num.subtract(tmp, Num.mulKaratsuba(y, n));
+            }
+
+            tmp.tenPow(1);
+            if (d)
+                wynik.tenPow(1);
+        }
+
+        wynik.removeLeadingZeros();
+        return wynik;
+    }
+
+    public static Num divide(Num x, long y) {
+        return Num.divide(x, new Num(y));
+    }
+
+    public static Num mod(Num x, Num y) {
+
+        Num d = Num.divide(x, y);
+        d = Num.mulKaratsuba(y, d);
+        d = Num.subtract(x, d);
+        return d;
+    }
+
+    public static Num mod(Num x, long y) {
+        return Num.mod(x, new Num(y));
+    }
+
+
 }
+
+

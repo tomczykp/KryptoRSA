@@ -183,5 +183,73 @@ public class NumTests {
 
     }
 
+    @Test
+    public void div1Test() {
+        Num l1;
+        Num l2;
+
+        long i1, i2;
+        Random rand = new Random();
+
+        for (int i = 0; i < 5000; i++) {
+            i1 = rand.nextInt(Integer.MAX_VALUE);
+            i2 = rand.nextInt(Integer.MAX_VALUE);
+
+            l1 = new Num(i1);
+            l2 = new Num(i2);
+
+            Num s = Num.divide(l1, l2);
+            long tmp = i1 / i2;
+
+            Assertions.assertEquals(String.valueOf(tmp), s.toString());
+            Assertions.assertEquals(String.valueOf(i1), l1.toString());
+            Assertions.assertEquals(String.valueOf(i2), l2.toString());
+        }
+    }
+
+    @Test
+    public void div2Test() {
+        Num l1;
+
+        long i1, i2;
+        Random rand = new Random();
+
+        for (int i = 0; i < 5000; i++) {
+            i1 = rand.nextInt(Integer.MAX_VALUE);
+            i2 = rand.nextInt(Integer.MAX_VALUE);
+
+            l1 = new Num(i1);
+
+            Num s = Num.divide(l1, i2);
+            long tmp = i1 / i2;
+
+            Assertions.assertEquals(String.valueOf(tmp), s.toString());
+            Assertions.assertEquals(String.valueOf(i1), l1.toString());
+        }
+    }
+
+    @Test
+    public void modTest() {
+        Num l1;
+        Num l2;
+
+        long i1, i2;
+        Random rand = new Random();
+
+        for (int i = 0; i < 5000; i++) {
+            i1 = rand.nextInt(Integer.MAX_VALUE);
+            i2 = rand.nextInt(Integer.MAX_VALUE);
+
+            l1 = new Num(i1);
+            l2 = new Num(i2);
+
+            Num s = Num.mod(l1, l2);
+            long tmp = i1 % i2;
+
+            Assertions.assertEquals(String.valueOf(tmp), s.toString());
+            Assertions.assertEquals(String.valueOf(i1), l1.toString());
+            Assertions.assertEquals(String.valueOf(i2), l2.toString());
+        }
+    }
 
 }
