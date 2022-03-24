@@ -3,6 +3,7 @@ package xyz.kryptografia.rsa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class Num implements Comparable<Num> {
 
@@ -417,6 +418,18 @@ public class Num implements Comparable<Num> {
     }
 
 
+    public static Num randNum(int bytes) {
+
+        List<Integer> l = new ArrayList<>();
+
+        long begin = (1L << (bytes-1)) + 1;
+        long end = (1L << bytes) - 1;
+        System.out.println("B = " + begin + ", e = " + end);
+
+
+
+        return new Num(l);
+    }
 }
 
 

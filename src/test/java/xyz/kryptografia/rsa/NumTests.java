@@ -252,4 +252,14 @@ public class NumTests {
         }
     }
 
+    @Test
+    public void mainTest() {
+        Num l = new Num("6325823572348863409685634954369546783446434");
+        Num tmp = Num.divide( l ,2);
+        System.out.println("Num = " +  tmp);
+        System.out.println("Num = " +  Num.pow(new Num(2), tmp));
+
+
+    }
+
 }
