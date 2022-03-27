@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	static boolean isPrime(int n) {
+	int n = 3000000;
+
+	public static boolean isPrime(int n) {
 		// Corner case
 		if (n <= 1)
 			return false;
@@ -20,7 +22,7 @@ public class NumTests {
 		return true;
 	}
 
-	static long power(int x, int y, int p) {
+	public static long modPow(int x, int y, int p) {
 		int res = 1; // Initialize result
 
 		x = x % p; // Update x if it is more than or
@@ -42,6 +44,46 @@ public class NumTests {
 		return res;
 	}
 
+	public static long GCD(long a, long b) {
+		while (b != 0) {
+			long tmp = b;
+			b = a % b;
+			a = tmp;
+		}
+
+		return a;
+	}
+
+	public static int modInverse(int a, int m) {
+		int m0 = m;
+		int y = 0, x = 1;
+
+		if (m == 1)
+			return 0;
+
+		while (a > 1) {
+			// q is quotient
+			int q = a / m;
+
+			int t = m;
+
+			// m is remainder now, process
+			// same as Euclid's algo
+			m = a % m;
+			a = t;
+			t = y;
+
+			// Update x and y
+			y = x - q * y;
+			x = t;
+		}
+
+		// Make x positive
+		if (x < 0)
+			x += m0;
+
+		return x;
+	}
 
 	@Test
 	public void addTest() {
@@ -50,7 +92,7 @@ public class NumTests {
 
 		long i1, i2;
 		Random rand = new Random();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 			l1 = new Num(i1);
@@ -63,7 +105,7 @@ public class NumTests {
 			System.out.println("Test " + i + " add()");
 		}
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 			l1 = new Num(i1);
@@ -83,7 +125,7 @@ public class NumTests {
 
 		long i1, i2;
 		Random rand = new Random();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 			l1 = new Num(i1);
@@ -100,7 +142,7 @@ public class NumTests {
 			System.out.println("Test " + i + " subtract()");
 		}
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 			l1 = new Num(i1);
@@ -116,51 +158,43 @@ public class NumTests {
 	}
 
 	@Test
-	public void mul1Test() {
-		Num l1;
+	public void mulTest() {
+		Num l1, l2, s;
 
-		long i1, i2;
+		long i1, i2, tmp;
 		Random rand = new Random();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
 
-			Num s = Num.mul(l1, i2);
-			long tmp = i1 * i2;
+			s = Num.mul(l1, i2);
+			tmp = i1 * i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 			System.out.println("Test " + i + " mul()");
 		}
 
-		long tmp = 100000;
+		tmp = 100000;
 		l1 = new Num(1);
 
 		for (int i = 0; i < 40; i++)
 			l1 = Num.mul(l1, tmp);
 
-		String s = "1" + "0".repeat(200);
-		Assertions.assertEquals(s, l1.toString());
-	}
+		String str = "1" + "0".repeat(200);
+		Assertions.assertEquals(str, l1.toString());
 
-	@Test
-	public void mul2Test() {
-		Num l1;
-		Num l2;
-
-		long i1, i2;
-		Random rand = new Random();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
 			l2 = new Num(i2);
 
-			Num s = Num.mul(l1, l2);
-			long tmp = i1 * i2;
+			s = Num.mul(l1, l2);
+			tmp = i1 * i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -168,22 +202,21 @@ public class NumTests {
 			System.out.println("Test " + i + " mul()");
 		}
 
-		long tmp = 100000;
+		tmp = 100000;
 		l2 = new Num(tmp);
 		l1 = new Num(1);
 
 		for (int i = 0; i < 40; i++)
 			l1 = Num.mul(l1, l2);
 
-		String s = "1" + "0".repeat(200);
-		Assertions.assertEquals(s, l1.toString());
+		str = "1" + "0".repeat(200);
+		Assertions.assertEquals(str, l1.toString());
 
 		tmp = 999999999;
 		l1 = Num.mul(new Num(tmp), tmp);
 
-		s = "999999998000000001";
-		Assertions.assertEquals(s, l1.toString());
-
+		str = "999999998000000001";
+		Assertions.assertEquals(str, l1.toString());
 	}
 
 	@Test
@@ -193,7 +226,7 @@ public class NumTests {
 
 		long i1, i2;
 		Random rand = new Random();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
@@ -211,6 +244,7 @@ public class NumTests {
 
 		String s;
 		s = "1" + "9".repeat(100);
+		System.out.println(s);
 		l2 = new Num(s);
 		l1 = new Num(s);
 		l1 = Num.mulKaratsuba(l1, l2);
@@ -228,45 +262,36 @@ public class NumTests {
 	}
 
 	@Test
-	public void div1Test() {
-		Num l1;
-		Num l2;
+	public void divTest() {
+		Num l1, l2, s;
 
-		long i1, i2;
+		long i1, i2, tmp;
 		Random rand = new Random();
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
-			i2 = rand.nextInt(Integer.MAX_VALUE);
+			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
 			l2 = new Num(i2);
 
-			Num s = Num.divide(l1, l2);
-			long tmp = i1 / i2;
+			s = Num.divide(l1, l2);
+			tmp = i1 / i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 			Assertions.assertEquals(String.valueOf(i2), l2.toString());
 			System.out.println("Test " + i + " divide()");
 		}
-	}
 
-	@Test
-	public void div2Test() {
-		Num l1;
-
-		long i1, i2;
-		Random rand = new Random();
-
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
-			i2 = rand.nextInt(Integer.MAX_VALUE);
+			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
 
-			Num s = Num.divide(l1, i2);
-			long tmp = i1 / i2;
+			s = Num.divide(l1, i2);
+			tmp = i1 / i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -282,9 +307,9 @@ public class NumTests {
 		long i1, i2;
 		Random rand = new Random();
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
-			i2 = rand.nextInt(Integer.MAX_VALUE);
+			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
 			l2 = new Num(i2);
@@ -308,7 +333,7 @@ public class NumTests {
 		int i1, i2;
 		Random rand = new Random();
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(1, Short.MAX_VALUE);
 			i2 = rand.nextInt(1, Short.MAX_VALUE);
 
@@ -317,7 +342,7 @@ public class NumTests {
 
 			System.out.println("Test " + i + " modPow()\n 2 ^ " + l1 + " mod " + l2);
 			Num s = Num.modPow(two, l1, l2);
-			long tmp = power(2, i1, i2);
+			long tmp = modPow(2, i1, i2);
 
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 			Assertions.assertEquals(String.valueOf(i2), l2.toString());
@@ -331,7 +356,7 @@ public class NumTests {
 		int i1;
 		Random rand = new Random();
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
@@ -349,11 +374,9 @@ public class NumTests {
 		for (int i = 0; i < 100; i++) {
 			p = Num.generateOdd(18);
 			k = Num.generateOdd(20);
-			System.out.println("Nowa para: " + p + " " + k);
 
-			for (int j = 0; j < 5000; j++) {
+			for (int j = 0; j < this.n; j++) {
 				Num tmp = Num.generateFromRange(p, k);
-				System.out.println("Test dla " + tmp);
 				Assertions.assertTrue(tmp.compareTo(p) > 0);
 				Assertions.assertTrue(tmp.compareTo(k) < 0);
 			}
@@ -362,35 +385,79 @@ public class NumTests {
 	}
 
 	@Test
-	public void prime1Test() {
+	public void primeTest() {
 		Num l1;
-//        int i1;
-//        Random rand = new Random();
+		int i1;
+		Random rand = new Random();
 
-		for (int i = 100; i < 5000; i++) {
-//            i1 = rand.nextInt(i);
+		for (int i = 0; i < this.n; i++) {
+			i1 = rand.nextInt(3, Integer.MAX_VALUE);
 
-			l1 = new Num(i);
-			System.out.println("Następna liczba: " + i);
-			Assertions.assertEquals(isPrime(i), l1.testRabinMiller());
-			Assertions.assertEquals(String.valueOf(i), l1.toString());
+			l1 = new Num(i1);
+			System.out.println("Test " + i + " prime(): " + i1);
+			Assertions.assertEquals(isPrime(i1), l1.testRabinMiller());
+			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 		}
 
 	}
 
 	@Test
+	public void gcdTest() {
+
+		Num l1;
+		Num l2;
+
+		long i1, i2;
+		Random rand = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			i1 = rand.nextInt(Integer.MAX_VALUE);
+			i2 = rand.nextInt(Integer.MAX_VALUE);
+
+			l1 = new Num(i1);
+			l2 = new Num(i2);
+
+			Num s = Num.gcd(l1, l2);
+			long tmp = GCD(i1, i2);
+
+			Assertions.assertEquals(String.valueOf(tmp), s.toString());
+			Assertions.assertEquals(String.valueOf(i1), l1.toString());
+			Assertions.assertEquals(String.valueOf(i2), l2.toString());
+			System.out.println("Test " + i + " gcd()");
+		}
+
+	}
+
+	@Test
+	public void modInverseTest() {
+
+		Num l1;
+		Num l2;
+
+		int i1, i2;
+		Random rand = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			i1 = rand.nextInt(1, Integer.MAX_VALUE);
+			i2 = rand.nextInt(1, Integer.MAX_VALUE);
+
+			l1 = new Num(i1);
+			l2 = new Num(i2);
+			if (GCD(i1, i2) != 1)
+				continue;
+
+			long tmp = modInverse(i1, i2);
+			Num s = Num.inverse(l1, l2);
+
+			Assertions.assertEquals(String.valueOf(tmp), s.toString());
+			Assertions.assertEquals(String.valueOf(i1), l1.toString());
+			Assertions.assertEquals(String.valueOf(i2), l2.toString());
+			System.out.println("Test " + i + " modInverse()");
+		}
+	}
+
+	@Test
 	public void mainTest() {
-
-//		Num a = Num.generateOdd(70);
-//		Num b = Num.generateOdd(70);
-//		Num n = Num.generateOdd(70);
-//		System.out.println(a);
-//		System.out.println(b);
-//		System.out.println(n);
-
-//		Num.modPow(a, b, n);
-
-		System.out.println(new Num(Num.randOdd(64)).testRabinMiller());
 
 	}
 

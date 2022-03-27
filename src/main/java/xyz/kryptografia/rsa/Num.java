@@ -475,7 +475,7 @@ public class Num implements Comparable<Num> {
 		}
 
 		if (s.size() > 1)
-			s.add(s.size() - 1, r.nextInt(9) + 1);
+			s.add(r.nextInt(9) + 1);
 		s.add(0, r.nextInt(5) * 2 + 1);
 
 		return new Num(s);
@@ -536,8 +536,8 @@ public class Num implements Comparable<Num> {
 			k++;
 
 
-		Num a = Num.generateFromRange(two, p_1);
-		a = two;
+//		Num a = Num.generateFromRange(two, p_1);
+		Num a = two;
 		Num m = Num.divide(p_1, Num.fastPow(two, k));
 		Num x = Num.modPow(a, m, this);
 
@@ -552,9 +552,87 @@ public class Num implements Comparable<Num> {
 			else if (x.equals(p_1))
 				return true;
 		}
-
-
 		return false;
+	}
+
+	public static Num gcd(Num a, Num b) {
+
+		Num cA = new Num(a);
+		Num cB = new Num(b);
+
+		while (!cB.isZero()) {
+			Num tmp = cB;
+			cB = Num.mod(cA, cB);
+			cA = tmp;
+		}
+
+		return cA;
+	}
+	
+	public static Num inverse(Num a0, Num m0) {
+
+		Num one = new Num(1);
+		Num x = new Num(1), y = new Num();
+		Num m = new Num(m0);
+		Num a = new Num(a0);
+		boolean xNeg = false, yNeg = false, tNeg;
+
+		if (m.equals(one))
+			return new Num();
+
+		while (a.compareTo(one) > 0) {
+
+			Num q = Num.divide(a, m);
+			Num t = new Num(m);
+
+			m = Num.mod(a, m);
+			a = new Num(t);
+
+			tNeg = yNeg;
+			t = new Num(y);
+
+			Num tmp = Num.mulKaratsuba(q, y);
+
+			if (yNeg) {
+				if (xNeg) {
+					//	y = q*y - x
+					if (tmp.compareTo(x) > 0) {
+						y = Num.subtract(tmp, x);
+						yNeg = false;
+					} else {
+						y = Num.subtract(x, tmp);
+						yNeg = true;
+					}
+				} else {
+					// y = q*y + x
+					y = Num.add(tmp, x);
+					yNeg = false;
+				}
+			} else {
+				if (xNeg) {
+					// y = - q*y - x
+					y = Num.add(tmp, x);
+					yNeg = true;
+				} else {
+					// y = -q*y + x
+					if (tmp.compareTo(x) > 0) {
+						y = Num.subtract(tmp, x);
+						yNeg = true;
+					} else {
+						y = Num.subtract(x, tmp);
+						yNeg = false;
+					}
+				}
+			}
+
+			xNeg = tNeg;
+			x = new Num(t);
+		}
+
+		if (xNeg)
+			x = Num.subtract(m0, x);
+
+		return x;
 	}
 
 

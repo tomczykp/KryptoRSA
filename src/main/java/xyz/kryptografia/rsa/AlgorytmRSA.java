@@ -1,5 +1,7 @@
 package xyz.kryptografia.rsa;
 
+import java.util.Base64;
+
 public class AlgorytmRSA implements Szyfr {
 
 	public AlgorytmRSA() {
@@ -19,31 +21,22 @@ public class AlgorytmRSA implements Szyfr {
 	}
 
 	@Override
-	public byte[][] genKey(int len) {
+	public Num[] genKey(int len) {
 
-		// find p i q (large primes)
-		// n = p * q
-		// fi = (p-1)*(q-1)
-		// e = rand(2^(size-1), 2^size) ? gcd(e, fi) == 1
-		// mod inverse d = (e, fi)
-		//
-		// pubKey = (n, e)
-		// privKey = (n, d)
+		Num one = new Num(1);
 		Num p, q;
 
 		do {
-			p = Num.generateOdd(len);
-			System.out.println("Checking p = " + p);
+			p = Num.randOdd(len);
 		} while (!p.testRabinMiller());
 
 		do {
-			q = Num.generateOdd(len);
-			System.out.println("Checking q = " + q);
+			q = Num.randOdd(len);
 		} while (!q.testRabinMiller());
 
 		while (q.equals(p)) {
 			do {
-				p = Num.generateOdd(len);
+				p = Num.randOdd(len);
 			} while (!p.testRabinMiller());
 		}
 
@@ -53,9 +46,19 @@ public class AlgorytmRSA implements Szyfr {
 				Num.subtract(q, 1)
 		);
 
+
+		Num e;
+		do {
+			e = Num.generateFromRange(one, n);
+		} while (!Num.gcd(e, fi).equals(one));
+
+		Num d = Num.inverse(e, n);
+
 		System.out.println("\tn = " + n + "\n\tfi = " + fi);
 
-		return null;
+
+		Num[] t = {e, n, d};
+		return t;
 	}
 
 }
