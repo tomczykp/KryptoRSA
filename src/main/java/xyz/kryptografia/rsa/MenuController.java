@@ -3,10 +3,7 @@ package xyz.kryptografia.rsa;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -54,7 +51,7 @@ public class MenuController {
 	private Button cipherTextSave;
 
 	@FXML
-	private TextField numBits;
+	private ComboBox<Integer> numBits;
 	@FXML
 	private Button generateKeys;
 
@@ -108,15 +105,16 @@ public class MenuController {
 
 	private void decrypt() {
 		byte[] cipherTextData = Base64.getDecoder().decode(this.cipherText.getText());
-		byte[] privKeyData = this.privKey.getText().getBytes();
+		Num[] privKeyData = Converter.decodeKey(this.privKey.getText());
 		byte[] data = this.szyfr.decrypt(cipherTextData, privKeyData);
 
 		// text <-> encrypt
 		// bin <-> to_base64 <-> from_base64 <-> encrypt
-		if (new String(data).matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
+		String tmp = new String(data);
+		if (tmp.matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
 			// był to text
 			this.plainTextLabel.setText("Plain text");
-			this.plainText.setText(new String(data));
+			this.plainText.setText(tmp);
 		} else {
 			this.plainTextLabel.setText("Plain text (base64)");
 			this.plainText.setText(Base64.getEncoder().encodeToString(data));
@@ -131,7 +129,7 @@ public class MenuController {
 			plainTextData = this.plainText.getText().getBytes();
 
 
-		byte[] pubKeyData = this.pubKey.getText().getBytes();
+		Num[] pubKeyData = Converter.decodeKey(this.pubKey.getText());
 		byte[] data = this.szyfr.encrypt(plainTextData, pubKeyData);
 
 		// text <-> encrypt
@@ -145,15 +143,14 @@ public class MenuController {
 	}
 
 	public void genKey() {
-		try {
-			int len = Integer.parseInt(this.numBits.getText());
-			System.out.println("Ilość bitów: " + len);
-			Num[] tmp = this.szyfr.genKey(len);
-			this.privKey.setText(tmp[0].toString());
-			this.pubKey.setText(tmp[1].toString());
 
-		} catch (RuntimeException ignored) {
-		}
+		int len = this.numBits.getValue();
+		System.out.println("Ilość bitów: " + len);
+
+		Num[][] tmp = this.szyfr.genKey(len);
+
+		this.privKey.setText(Converter.encodeKey(tmp[0]));
+		this.pubKey.setText(Converter.encodeKey(tmp[0]));
 	}
 
 	public void saveFile(String data) {

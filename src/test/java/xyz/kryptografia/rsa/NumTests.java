@@ -390,7 +390,7 @@ public class NumTests {
 		int i1;
 		Random rand = new Random();
 
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 1000; i++) {
 			i1 = rand.nextInt(3, Integer.MAX_VALUE);
 
 			l1 = new Num(i1);

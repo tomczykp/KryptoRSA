@@ -7,31 +7,43 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
 
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.Integer?>
 <VBox styleClass="menu" xmlns:fx="http://javafx.com/fxml">
 
-    <Label fx:id="welcomeText" text="RSA algorithm" styleClass="h1" />
+    <Label fx:id="welcomeText" text="RSA algorithm" styleClass="h1"/>
     <VBox styleClass="section">
         <HBox>
             <VBox styleClass="box">
                 <Label text="PUBLIC KEY"/>
                 <TextField fx:id="pubKey" styleClass="textField"/>
                 <HBox styleClass="operationHBox">
-                    <Button fx:id="pubKeyLoad" styleClass="button" text="Load"  />
-                    <Button fx:id="pubKeySave" styleClass="button" text="Save" />
+                    <Button fx:id="pubKeyLoad" styleClass="button" text="Load"/>
+                    <Button fx:id="pubKeySave" styleClass="button" text="Save"/>
                 </HBox>
             </VBox>
             <VBox styleClass="box">
                 <Label text="PRIVATE KEY"/>
                 <TextField fx:id="privKey" styleClass="textField"/>
                 <HBox styleClass="operationHBox">
-                    <Button fx:id="privKeyLoad" styleClass="button" text="Load" />
-                    <Button fx:id="privKeySave" styleClass="button" text="Save" />
+                    <Button fx:id="privKeyLoad" styleClass="button" text="Load"/>
+                    <Button fx:id="privKeySave" styleClass="button" text="Save"/>
                 </HBox>
             </VBox>
         </HBox>
         <HBox>
-            <Button fx:id="generateKeys" text="Generate keys" styleClass="button" />
-            <TextField fx:id="numBits" styleClass="numBits"/>
+            <Button fx:id="generateKeys" text="Generate keys" styleClass="button"/>
+            <ComboBox fx:id="numBits" styleClass="numBits" value="64">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Integer fx:value="64"/>
+                        <Integer fx:value="128"/>
+                        <Integer fx:value="256"/>
+                        <Integer fx:value="512"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
             <Label text="bites"/>
         </HBox>
     </VBox>
