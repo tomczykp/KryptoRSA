@@ -34,16 +34,7 @@
         </HBox>
         <HBox>
             <Button fx:id="generateKeys" text="Generate keys" styleClass="button"/>
-            <ComboBox fx:id="numBits" styleClass="numBits" value="64">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <Integer fx:value="64"/>
-                        <Integer fx:value="128"/>
-                        <Integer fx:value="256"/>
-                        <Integer fx:value="512"/>
-                    </FXCollections>
-                </items>
-            </ComboBox>
+            <ComboBox fx:id="numBits" styleClass="numBits" value="64"/>
             <Label text="bites"/>
         </HBox>
     </VBox>

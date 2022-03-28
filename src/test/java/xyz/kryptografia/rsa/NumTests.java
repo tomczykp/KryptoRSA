@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	int n = 3000000;
+	int n = 5000;
+	int nP = 100;
 
 	public static boolean isPrime(int n) {
 		// Corner case
@@ -390,7 +391,7 @@ public class NumTests {
 		int i1;
 		Random rand = new Random();
 
-		for (int i = 0; i < this.n / 1000; i++) {
+		for (int i = 0; i < this.nP; i++) {
 			i1 = rand.nextInt(3, Integer.MAX_VALUE);
 
 			l1 = new Num(i1);

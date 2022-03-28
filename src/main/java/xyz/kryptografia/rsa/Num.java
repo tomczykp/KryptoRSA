@@ -476,7 +476,9 @@ public class Num implements Comparable<Num> {
 
 		if (s.size() > 1)
 			s.add(r.nextInt(9) + 1);
-		s.add(0, r.nextInt(5) * 2 + 1);
+		int[] t = {1, 3, 7, 9};
+
+		s.add(0, t[r.nextInt(4)]);
 
 		return new Num(s);
 	}
@@ -568,7 +570,7 @@ public class Num implements Comparable<Num> {
 
 		return cA;
 	}
-	
+
 	public static Num inverse(Num a0, Num m0) {
 
 		Num one = new Num(1);

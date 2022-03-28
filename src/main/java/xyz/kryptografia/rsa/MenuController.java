@@ -80,6 +80,8 @@ public class MenuController {
 			this.pubKeySave.setOnAction((e) -> this.saveFile(this.pubKey.getText()));
 
 			this.generateKeys.setOnAction((e) -> this.genKey());
+			this.numBits.getItems().addAll(64, 128, 256, 512, 1024);
+			this.numBits.setValue(64);
 
 			this.plainTextLoad.setOnAction((e) -> {
 						this.plainText.setText(new String(this.loadFile(true, false)));
@@ -127,7 +129,6 @@ public class MenuController {
 			plainTextData = Base64.getDecoder().decode(this.plainText.getText());
 		else
 			plainTextData = this.plainText.getText().getBytes();
-
 
 		Num[] pubKeyData = Converter.decodeKey(this.pubKey.getText());
 		byte[] data = this.szyfr.encrypt(plainTextData, pubKeyData);
