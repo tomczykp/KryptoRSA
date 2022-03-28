@@ -1,5 +1,6 @@
 package xyz.kryptografia.rsa;
 
+
 import java.util.Random;
 
 import org.junit.jupiter.api.Assertions;
@@ -7,8 +8,8 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	int n = 5000;
-	int nP = 100;
+	int n = 50000;
+	int nP = 1000;
 
 	public static boolean isPrime(int n) {
 		// Corner case
@@ -459,6 +460,7 @@ public class NumTests {
 
 	@Test
 	public void mainTest() {
+
 
 	}
 

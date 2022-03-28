@@ -108,6 +108,8 @@ public class MenuController {
 	private void decrypt() {
 		byte[] cipherTextData = Base64.getDecoder().decode(this.cipherText.getText());
 		Num[] privKeyData = Converter.decodeKey(this.privKey.getText());
+		System.out.println("Pub key = " + privKeyData[0] + "\n" + privKeyData[1]);
+
 		byte[] data = this.szyfr.decrypt(cipherTextData, privKeyData);
 
 		// text <-> encrypt
@@ -131,6 +133,7 @@ public class MenuController {
 			plainTextData = this.plainText.getText().getBytes();
 
 		Num[] pubKeyData = Converter.decodeKey(this.pubKey.getText());
+		System.out.println("Pub key = " + pubKeyData[0] + "\n" + pubKeyData[1]);
 		byte[] data = this.szyfr.encrypt(plainTextData, pubKeyData);
 
 		// text <-> encrypt
@@ -150,8 +153,9 @@ public class MenuController {
 
 		Num[][] tmp = this.szyfr.genKey(len);
 
+		System.out.println("Nums = " + tmp[0][0] + "\n" + tmp[0][1] + "\n" + tmp[1][0]);
 		this.privKey.setText(Converter.encodeKey(tmp[0]));
-		this.pubKey.setText(Converter.encodeKey(tmp[0]));
+		this.pubKey.setText(Converter.encodeKey(tmp[1]));
 	}
 
 	public void saveFile(String data) {
