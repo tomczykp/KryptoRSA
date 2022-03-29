@@ -1,5 +1,6 @@
 package xyz.kryptografia.rsa;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,12 +42,7 @@ public class Num implements Comparable<Num> {
 		for (byte b : d) {
 			t = Num.mulKaratsuba(t, shift);
 			t = Num.add(t, Byte.toUnsignedInt(b));
-			System.out.println("Next byte");
 		}
-//		MjMzODI2NjMwMjUxMDQ1ODg5MDE3OTM3ODM5Mzk2MTg1NTE0MjIzMyA0NTg2NTk5Mjg1NjkzNTkyNDM4NDI4NzgwNjk1ODQ4MjU0MzE3NDU3
-//
-//		NTEgNDU4NjU5OTI4NTY5MzU5MjQzODQyODc4MDY5NTg0ODI1NDMxNzQ1Nw
-
 		this.liczba = t.liczba;
 	}
 
@@ -151,6 +147,33 @@ public class Num implements Comparable<Num> {
 
 		this.removeLeadingZeros();
 		return this;
+	}
+
+	public long toLong() {
+		Num longNum = new Num(String.valueOf(Long.MAX_VALUE));
+		if (this.compareTo(longNum) > 0)
+			return 0;
+		return Long.parseLong(this.toString());
+	}
+
+	public byte[] getBytes() {
+		int n = 0;
+		Num copy = new Num(this);
+		Num tmp = new Num(this);
+		Num b = new Num("256");
+		while (!tmp.isZero()) {
+			n++;
+			tmp = Num.divide(tmp, b);
+		}
+
+		int size = n / 8;
+		if (n % 8 != 0)
+			size++;
+
+		System.out.println("Powinno być " + n + " byte");
+		byte[] buffer = new byte[n];
+
+		return buffer;
 	}
 
 	public static Num add(Num x, Num y) {
@@ -367,44 +390,12 @@ public class Num implements Comparable<Num> {
 		return Num.mulKaratsuba(x, new Num(y));
 	}
 
-	public static Num pow(Num a, long n) {
-		if (n == 0)
-			return new Num();
-
-		Num tmp = new Num(a);
-
-		for (int i = 0; i < n - 1; i++)
-			tmp = Num.mulKaratsuba(tmp, a);
-
-		return tmp;
-	}
-
-	public static Num pow(Num a, Num n) {
-		Num tmp = new Num(a);
-
-		for (int i = 0; !n.isZero(); n = Num.subtract(n, 1))
-			tmp = Num.mulKaratsuba(tmp, a);
-
-		return tmp;
-	}
-
 	public static Num fastPow(Num a, long n) {
 		if (n == 0)
 			return new Num(1);
 
 		Num tmp = Num.fastPow(a, n / 2);
 		if (n % 2 == 0)
-			return Num.mulKaratsuba(tmp, tmp);
-		else
-			return Num.mulKaratsuba(a, Num.mulKaratsuba(tmp, tmp));
-	}
-
-	public static Num fastPow(Num a, Num n) {
-		if (n.isZero())
-			return new Num(1);
-
-		Num tmp = Num.fastPow(a, Num.divide(n, 2));
-		if (Objects.equals(Num.mod(n, 2).toString(), "0"))
 			return Num.mulKaratsuba(tmp, tmp);
 		else
 			return Num.mulKaratsuba(a, Num.mulKaratsuba(tmp, tmp));
@@ -587,7 +578,7 @@ public class Num implements Comparable<Num> {
 		return cA;
 	}
 
-	public static Num inverse(Num a0, Num m0) {
+	public static Num modInverse(Num a0, Num m0) {
 
 		Num one = new Num(1);
 		Num x = new Num(1), y = new Num();

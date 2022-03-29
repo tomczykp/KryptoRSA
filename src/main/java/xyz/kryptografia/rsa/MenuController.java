@@ -12,13 +12,14 @@ import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.util.Base64;
+import java.util.Objects;
 
 
 public class MenuController {
 
 	private final Stage window;
 	private boolean isBased;
-	private Szyfr szyfr;
+	private final Szyfr szyfr;
 
 	@FXML
 	private TextField pubKey;
@@ -106,15 +107,19 @@ public class MenuController {
 	}
 
 	private void decrypt() {
-		byte[] cipherTextData = Base64.getDecoder().decode(this.cipherText.getText());
+		if (Objects.equals(this.cipherText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
+			return;
+
+		Num[] cipherTextData = Converter.decode(this.cipherText.getText());
 		Num[] privKeyData = Converter.decode(this.privKey.getText());
 
 		System.out.println("Priv: " + privKeyData[0] + ", " + privKeyData[1]);
 
-		byte[] data = this.szyfr.decrypt(cipherTextData, privKeyData);
+		Num[] nums = this.szyfr.decrypt(cipherTextData, privKeyData);
 
 		// text <-> encrypt
 		// bin <-> to_base64 <-> from_base64 <-> encrypt
+		byte[] data = Converter.numsToBytes(nums);
 		String tmp = new String(data);
 		if (tmp.matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
 			// był to text
@@ -127,7 +132,11 @@ public class MenuController {
 	}
 
 	private void encrypt() {
+		if (Objects.equals(this.plainText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
+			return;
+
 		byte[] plainTextData;
+
 		if (this.isBased)
 			plainTextData = Base64.getDecoder().decode(this.plainText.getText());
 		else
@@ -136,12 +145,12 @@ public class MenuController {
 		Num[] pubKeyData = Converter.decode(this.pubKey.getText());
 		System.out.println("Pub: " + pubKeyData[0] + ", " + pubKeyData[1]);
 
-		byte[] data = this.szyfr.encrypt(plainTextData, pubKeyData);
+		Num[] data = this.szyfr.encrypt(Converter.bytesToNums(plainTextData), pubKeyData);
 
 		// text <-> encrypt
 		// bin <-> to_base64 <-> from_base64 <-> encrypt
 
-		this.cipherText.setText(Base64.getEncoder().encodeToString(data));
+		this.cipherText.setText(Converter.encode(data));
 	}
 
 	public void showStage() {
@@ -153,7 +162,9 @@ public class MenuController {
 		int len = this.numBits.getValue();
 		System.out.println("Ilość bitów: " + len);
 
+		long start = System.currentTimeMillis();
 		Num[][] tmp = this.szyfr.genKey(len);
+		System.out.println("Generowanie trwało: " + (System.currentTimeMillis() - start));
 
 		this.privKey.setText(Converter.encode(tmp[0]));
 		this.pubKey.setText(Converter.encode(tmp[1]));

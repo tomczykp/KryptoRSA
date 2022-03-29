@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	int n = 500000;
-	int nP = 1000;
+	int n = 5000;
+	int nP = 100;
 
 	public static boolean isPrime(int n) {
 		// Corner case
@@ -441,7 +441,6 @@ public class NumTests {
 			Assertions.assertEquals(String.valueOf(i2), l2.toString());
 			System.out.println("Test " + i + " gcd()");
 		}
-
 	}
 
 	@Test
@@ -463,7 +462,7 @@ public class NumTests {
 				continue;
 
 			long tmp = modInverse(i1, i2);
-			Num s = Num.inverse(l1, l2);
+			Num s = Num.modInverse(l1, l2);
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -494,13 +493,40 @@ public class NumTests {
 	}
 
 	@Test
-	public void mainTest() {
+	public void toLongTest() {
 
-		byte[] tmp = new byte[256];
-		Random r = new Random();
-		r.nextBytes(tmp);
-		Num t = new Num(tmp);
-		System.out.println(t);
+		Num l1;
+		long i1;
+		Random rand = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			i1 = rand.nextLong(Long.MAX_VALUE);
+			l1 = new Num(i1);
+
+			Assertions.assertEquals(i1, l1.toLong());
+			System.out.println("Test " + i + " toLong()");
+		}
+	}
+
+	@Test
+	public void algoTest() {
+		String msg = "xexe";
+
+		AlgorytmRSA a = new AlgorytmRSA();
+		Num[][] t = a.genKey(64);
+		Num n = t[0][1];
+		Num e = t[0][0];
+		Num d = t[1][0];
+		Num fi = t[1][2];
+		System.out.println("ke ? " + Num.mod(Num.mulKaratsuba(e, d), fi));
+		Num[] ms = Converter.bytesToNums(msg.getBytes());
+
+		for (Num m : ms) {
+			Num enc = Num.modPow(m, e, n);
+			Num out = Num.modPow(enc, d, n);
+			System.out.println("Wyszło: \n\t" + enc + "\n\t" + out);
+		}
+
 	}
 
 }

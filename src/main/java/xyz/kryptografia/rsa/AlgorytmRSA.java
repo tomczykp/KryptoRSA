@@ -1,6 +1,6 @@
 package xyz.kryptografia.rsa;
 
-import java.util.Base64;
+import java.util.Arrays;
 
 public class AlgorytmRSA implements Szyfr {
 
@@ -9,15 +9,25 @@ public class AlgorytmRSA implements Szyfr {
 	}
 
 	@Override
-	public byte[] encrypt(byte[] plainText, Num[] pubKey) {
-
-		return plainText;
+	public Num[] encrypt(Num[] plainText, Num[] pubKey) {
+		return this.crypt(plainText, pubKey);
 	}
 
 	@Override
-	public byte[] decrypt(byte[] cipherText, Num[] privKey) {
+	public Num[] decrypt(Num[] cipherText, Num[] privKey) {
+		return this.crypt(cipherText, privKey);
+	}
 
-		return cipherText;
+	@Override
+	public Num[] crypt(Num[] text, Num[] keys) {
+		int l = text.length;
+		Num[] wynik = new Num[l];
+
+		for (int i = 0; i < l; i++)
+			wynik[i] = Num.modPow(text[i], keys[0], keys[1]);
+
+		System.out.println("Po operacjach mat: " + Arrays.toString(wynik));
+		return wynik;
 	}
 
 	@Override
@@ -51,16 +61,15 @@ public class AlgorytmRSA implements Szyfr {
 
 		Num e;
 		do {
-			e = Num.generateFromRange(one, n);
+			e = Num.generateFromRange(one, fi);
 		} while (!Num.gcd(e, fi).equals(one));
 
-		Num d = Num.inverse(e, n);
+		Num d = Num.modInverse(e, fi);
 
 		System.out.println("\tn = " + n + "\n\td = " + d + "\n\te = " + e);
 
 
-		Num[][] t = {{e, n}, {d, n}};
-		return t;
+		return new Num[][]{{e, n}, {d, n, fi}};
 	}
 
 
