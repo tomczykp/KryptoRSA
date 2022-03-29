@@ -159,19 +159,22 @@ public class Num implements Comparable<Num> {
 	public byte[] getBytes() {
 		int n = 0;
 		Num copy = new Num(this);
-		Num tmp = new Num(this);
+		Num copy1 = new Num(this);
 		Num b = new Num("256");
-		while (!tmp.isZero()) {
+		while (!copy.isZero()) {
+			copy = Num.divide(copy, b);
 			n++;
-			tmp = Num.divide(tmp, b);
 		}
 
-		int size = n / 8;
-		if (n % 8 != 0)
-			size++;
+		byte[] buffer = new byte[n];
+		int i = 0;
+		while (!copy1.isZero()) {
+			buffer[n - i - 1] = (byte) (Num.mod(copy1, b).toLong() % 0xff);
+			copy1 = Num.divide(copy1, b);
+			i++;
+		}
 
 		System.out.println("Powinno być " + n + " byte");
-		byte[] buffer = new byte[n];
 
 		return buffer;
 	}

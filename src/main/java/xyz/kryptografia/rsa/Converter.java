@@ -5,6 +5,8 @@ import java.util.Base64;
 
 public class Converter {
 
+	private static final int chunkSize = 16;
+
 	public static Num[] decode(String data) {
 		// hex dec albo base64 text
 
@@ -60,8 +62,8 @@ public class Converter {
 
 	public static Num[] bytesToNums(byte[] bytes) {
 		System.out.println("Bytów odczytano: " + bytes.length);
-		int n = bytes.length / 8;
-		int reminder = bytes.length % 8;
+		int n = bytes.length / chunkSize;
+		int reminder = bytes.length % chunkSize;
 		int size = n;
 		if (reminder != 0)
 			size++;
@@ -69,9 +71,9 @@ public class Converter {
 		Num[] wynik = new Num[size];
 
 		for (int i = 0; i < n; i++) {
-			byte[] t = new byte[8];
-			for (int j = 0; j < 8; j++)
-				t[j] = bytes[i * 8 + j];
+			byte[] t = new byte[chunkSize];
+			for (int j = 0; j < chunkSize; j++)
+				t[j] = bytes[i * chunkSize + j];
 
 			wynik[i] = new Num(t);
 		}
@@ -79,7 +81,7 @@ public class Converter {
 		if (reminder != 0) {
 			byte[] t = new byte[reminder];
 			for (int i = 0; i < reminder; i++)
-				t[i] = bytes[i + n * 8];
+				t[i] = bytes[i + n * chunkSize];
 
 			wynik[size - 1] = new Num(t);
 		}
