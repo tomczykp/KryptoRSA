@@ -74,18 +74,18 @@ public class MenuController {
 			scene.getStylesheets().add("style.css");
 			this.window.setScene(scene);
 
-			this.privKeyLoad.setOnAction((e) -> this.privKey.setText(new String(this.loadFile(false, true))));
-			this.privKeySave.setOnAction((e) -> this.saveFile(this.privKey.getText()));
+			this.privKeyLoad.setOnAction((e) -> this.privKey.setText(new String(this.loadFile(false))));
+			this.privKeySave.setOnAction((e) -> this.saveFile(this.privKey.getText(), true));
 
-			this.pubKeyLoad.setOnAction((e) -> this.pubKey.setText(new String(this.loadFile(false, true))));
-			this.pubKeySave.setOnAction((e) -> this.saveFile(this.pubKey.getText()));
+			this.pubKeyLoad.setOnAction((e) -> this.pubKey.setText(new String(this.loadFile(false))));
+			this.pubKeySave.setOnAction((e) -> this.saveFile(this.pubKey.getText(), true));
 
 			this.generateKeys.setOnAction((e) -> this.genKey());
 			this.numBits.getItems().addAll(64, 128, 256, 512, 1024);
 			this.numBits.setValue(64);
 
 			this.plainTextLoad.setOnAction((e) -> {
-						this.plainText.setText(new String(this.loadFile(true, false)));
+						this.plainText.setText(new String(this.loadFile(true)));
 						if (this.isBased)
 							this.plainTextLabel.setText("Plain text (base64)");
 						else
@@ -95,8 +95,8 @@ public class MenuController {
 
 			this.plainTextSave.setOnAction((e) -> this.saveFile(this.plainText.getText()));
 
-			this.cipherTextLoad.setOnAction((e) -> this.cipherText.setText(new String(this.loadFile(false, true))));
-			this.cipherTextSave.setOnAction((e) -> this.saveFile(this.cipherText.getText()));
+			this.cipherTextLoad.setOnAction((e) -> this.cipherText.setText(new String(this.loadFile(false))));
+			this.cipherTextSave.setOnAction((e) -> this.saveFile(this.cipherText.getText(), true));
 
 			this.encryptButton.setOnAction((e) -> this.encrypt());
 			this.decryptButton.setOnAction((e) -> this.decrypt());
@@ -171,6 +171,10 @@ public class MenuController {
 	}
 
 	public void saveFile(String data) {
+		this.saveFile(data, false);
+	}
+
+	public void saveFile(String data, boolean clean) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save file");
 		File file = fileChooser.showSaveDialog(this.window);
@@ -178,10 +182,14 @@ public class MenuController {
 		try (FileOutputStream outStream = new FileOutputStream(file)) {
 
 			byte[] tmp;
-			try {
-				tmp = Base64.getDecoder().decode(data);
-			} catch (IllegalArgumentException e) {
+			if (clean)
 				tmp = data.getBytes();
+			else {
+				try {
+					tmp = Base64.getDecoder().decode(data);
+				} catch (IllegalArgumentException e) {
+					tmp = data.getBytes();
+				}
 			}
 			outStream.write(tmp);
 
@@ -190,7 +198,7 @@ public class MenuController {
 		}
 	}
 
-	public byte[] loadFile(boolean plainText, boolean doLoadBin) {
+	public byte[] loadFile(boolean plainText) {
 
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open file");
@@ -201,10 +209,7 @@ public class MenuController {
 			byte[] tmp;
 			boolean wasBased;
 
-			if (doLoadBin) {
-				wasBased = true;
-				tmp = Base64.getEncoder().encode(data);
-			} else if (new String(data).matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
+			if (new String(data).matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
 				wasBased = false;
 				tmp = data;
 			} else {
