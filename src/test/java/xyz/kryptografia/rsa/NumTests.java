@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	int n = 50000;
+	int n = 500000;
 	int nP = 1000;
 
 	public static boolean isPrime(int n) {
@@ -85,6 +85,20 @@ public class NumTests {
 			x += m0;
 
 		return x;
+	}
+
+	public static long convertToLong(byte[] bytes) {
+		long value = 0L;
+
+		// Iterating through for loop
+		for (byte b : bytes) {
+			// Shifting previous value 8 bits to right and
+			// add it with next value
+
+			value = (value << 8) + Byte.toUnsignedInt(b);
+		}
+
+		return value;
 	}
 
 	@Test
@@ -459,9 +473,34 @@ public class NumTests {
 	}
 
 	@Test
+	public void byteConstructorTest() {
+		Num l1;
+		long i1;
+		byte[] tmp;
+
+		Random r = new Random();
+		for (int i = 0; i < this.n; i++) {
+
+			tmp = new byte[r.nextInt(2, 7)];
+			r.nextBytes(tmp);
+
+			l1 = new Num(tmp);
+			i1 = convertToLong(tmp);
+
+			Assertions.assertEquals(String.valueOf(i1), l1.toString());
+
+		}
+
+	}
+
+	@Test
 	public void mainTest() {
 
-
+		byte[] tmp = new byte[256];
+		Random r = new Random();
+		r.nextBytes(tmp);
+		Num t = new Num(tmp);
+		System.out.println(t);
 	}
 
 }

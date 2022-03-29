@@ -56,7 +56,7 @@ public class AlgorytmRSA implements Szyfr {
 
 		Num d = Num.inverse(e, n);
 
-		System.out.println("\tn = " + n + "\n\tfi = " + fi);
+		System.out.println("\tn = " + n + "\n\td = " + d + "\n\te = " + e);
 
 
 		Num[][] t = {{e, n}, {d, n}};

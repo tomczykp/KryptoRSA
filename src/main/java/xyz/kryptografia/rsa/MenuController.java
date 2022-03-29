@@ -73,10 +73,10 @@ public class MenuController {
 			scene.getStylesheets().add("style.css");
 			this.window.setScene(scene);
 
-			this.privKeyLoad.setOnAction((e) -> this.privKey.setText(new String(this.loadFile())));
+			this.privKeyLoad.setOnAction((e) -> this.privKey.setText(new String(this.loadFile(false, true))));
 			this.privKeySave.setOnAction((e) -> this.saveFile(this.privKey.getText()));
 
-			this.pubKeyLoad.setOnAction((e) -> this.pubKey.setText(new String(this.loadFile())));
+			this.pubKeyLoad.setOnAction((e) -> this.pubKey.setText(new String(this.loadFile(false, true))));
 			this.pubKeySave.setOnAction((e) -> this.saveFile(this.pubKey.getText()));
 
 			this.generateKeys.setOnAction((e) -> this.genKey());
@@ -107,8 +107,9 @@ public class MenuController {
 
 	private void decrypt() {
 		byte[] cipherTextData = Base64.getDecoder().decode(this.cipherText.getText());
-		Num[] privKeyData = Converter.decodeKey(this.privKey.getText());
-		System.out.println("Pub key = " + privKeyData[0] + "\n" + privKeyData[1]);
+		Num[] privKeyData = Converter.decode(this.privKey.getText());
+
+		System.out.println("Priv: " + privKeyData[0] + ", " + privKeyData[1]);
 
 		byte[] data = this.szyfr.decrypt(cipherTextData, privKeyData);
 
@@ -132,8 +133,9 @@ public class MenuController {
 		else
 			plainTextData = this.plainText.getText().getBytes();
 
-		Num[] pubKeyData = Converter.decodeKey(this.pubKey.getText());
-		System.out.println("Pub key = " + pubKeyData[0] + "\n" + pubKeyData[1]);
+		Num[] pubKeyData = Converter.decode(this.pubKey.getText());
+		System.out.println("Pub: " + pubKeyData[0] + ", " + pubKeyData[1]);
+
 		byte[] data = this.szyfr.encrypt(plainTextData, pubKeyData);
 
 		// text <-> encrypt
@@ -153,9 +155,8 @@ public class MenuController {
 
 		Num[][] tmp = this.szyfr.genKey(len);
 
-		System.out.println("Nums = " + tmp[0][0] + "\n" + tmp[0][1] + "\n" + tmp[1][0]);
-		this.privKey.setText(Converter.encodeKey(tmp[0]));
-		this.pubKey.setText(Converter.encodeKey(tmp[1]));
+		this.privKey.setText(Converter.encode(tmp[0]));
+		this.pubKey.setText(Converter.encode(tmp[1]));
 	}
 
 	public void saveFile(String data) {
@@ -176,10 +177,6 @@ public class MenuController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public byte[] loadFile() {
-		return this.loadFile(false, false);
 	}
 
 	public byte[] loadFile(boolean plainText, boolean doLoadBin) {

@@ -4,7 +4,7 @@ import java.util.Base64;
 
 public class Converter {
 
-	public static Num[] decodeKey(String data) {
+	public static Num[] decode(String data) {
 		// hex dec albo base64 text
 
 		byte[] tmp = Base64.getDecoder().decode(data);
@@ -13,7 +13,7 @@ public class Converter {
 		return wynik;
 	}
 
-	public static String encodeKey(Num[] nums) {
+	public static String encode(Num[] nums) {
 		String combine = nums[0].toString() + " " + nums[1].toString();
 		return new String(Base64.getEncoder().encode(combine.getBytes()));
 	}

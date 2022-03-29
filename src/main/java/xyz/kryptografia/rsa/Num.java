@@ -34,6 +34,22 @@ public class Num implements Comparable<Num> {
 		}
 	}
 
+	public Num(byte[] d) {
+		Num t = new Num();
+		Num shift = new Num(256);
+
+		for (byte b : d) {
+			t = Num.mulKaratsuba(t, shift);
+			t = Num.add(t, Byte.toUnsignedInt(b));
+			System.out.println("Next byte");
+		}
+//		MjMzODI2NjMwMjUxMDQ1ODg5MDE3OTM3ODM5Mzk2MTg1NTE0MjIzMyA0NTg2NTk5Mjg1NjkzNTkyNDM4NDI4NzgwNjk1ODQ4MjU0MzE3NDU3
+//
+//		NTEgNDU4NjU5OTI4NTY5MzU5MjQzODQyODc4MDY5NTg0ODI1NDMxNzQ1Nw
+
+		this.liczba = t.liczba;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();

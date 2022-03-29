@@ -2,3 +2,5 @@ target
 rsa.iml
 .idea
 .attach*
+*.pub
+*.priv
