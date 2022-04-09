@@ -1,28 +1,26 @@
 package xyz.kryptografia.rsa;
 
+import xyz.kryptografia.rsa.liczby.Num;
+
 import java.util.Arrays;
 import java.util.Base64;
 
 public class Converter {
 
-	private static final int chunkSize = 16;
-
+	// base64_string -> nums
 	public static Num[] decode(String data) {
-		// hex dec albo base64 text
 
 		byte[] tmp = Base64.getDecoder().decode(data);
-
 		String[] t = new String(tmp).split(" ");
-
 		Num[] wynik = new Num[t.length];
 
-		for (int i = 0; i < t.length; i++) {
+		for (int i = 0; i < t.length; i++)
 			wynik[i] = new Num(t[i]);
-		}
 
 		return wynik;
 	}
 
+	// nums -> base64_string
 	public static String encode(Num[] nums) {
 		String combine = "";
 		for (Num n : nums)
@@ -42,7 +40,7 @@ public class Converter {
 		for (int i = 0; i < s; i++) {
 
 			byteBytes[i] = nums[i].getBytes();
-			System.out.println(i + " liczba na bytes: \n\t" + Arrays.toString(byteBytes[i]));
+			System.out.println(i + " liczba na bytes: " + Arrays.toString(byteBytes[i]));
 
 			lengths[i] = byteBytes[i].length;
 			suma += lengths[i];
@@ -60,8 +58,8 @@ public class Converter {
 		return wynik;
 	}
 
-	public static Num[] bytesToNums(byte[] bytes) {
-		System.out.println("Bytów odczytano: " + bytes.length);
+	public static Num[] bytesToNums(byte[] bytes, int chunkSize) {
+		System.out.println("Bytów odczytano: " + bytes.length + ", bytes: " + Arrays.toString(bytes));
 		int n = bytes.length / chunkSize;
 		int reminder = bytes.length % chunkSize;
 		int size = n;
@@ -85,7 +83,6 @@ public class Converter {
 
 			wynik[size - 1] = new Num(t);
 		}
-		System.out.println("Wyszło: " + size + " liczb\n\t" + Arrays.toString(wynik));
 		return wynik;
 	}
 

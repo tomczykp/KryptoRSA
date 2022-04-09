@@ -1,5 +1,4 @@
-package xyz.kryptografia.rsa;
-
+package xyz.kryptografia.rsa.liczby;
 
 import java.util.Random;
 
@@ -8,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	int n = 5000;
-	int nP = 100;
+	int n = 5000000;
+	int nP = 10000;
 
 	public static boolean isPrime(int n) {
 		// Corner case
@@ -411,7 +410,7 @@ public class NumTests {
 
 			l1 = new Num(i1);
 			System.out.println("Test " + i + " prime(): " + i1);
-			Assertions.assertEquals(isPrime(i1), l1.testRabinMiller());
+			Assertions.assertEquals(isPrime(i1), l1.isPrime());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 		}
 
@@ -472,27 +471,6 @@ public class NumTests {
 	}
 
 	@Test
-	public void byteConstructorTest() {
-		Num l1;
-		long i1;
-		byte[] tmp;
-
-		Random r = new Random();
-		for (int i = 0; i < this.n; i++) {
-
-			tmp = new byte[r.nextInt(2, 7)];
-			r.nextBytes(tmp);
-
-			l1 = new Num(tmp);
-			i1 = convertToLong(tmp);
-
-			Assertions.assertEquals(String.valueOf(i1), l1.toString());
-
-		}
-
-	}
-
-	@Test
 	public void toLongTest() {
 
 		Num l1;
@@ -510,22 +488,16 @@ public class NumTests {
 
 	@Test
 	public void algoTest() {
-		String msg = "xexe";
 
-		AlgorytmRSA a = new AlgorytmRSA();
-		Num[][] t = a.genKey(64);
-		Num n = t[0][1];
-		Num e = t[0][0];
-		Num d = t[1][0];
-		Num fi = t[1][2];
-		System.out.println("ke ? " + Num.mod(Num.mulKaratsuba(e, d), fi));
-		Num[] ms = Converter.bytesToNums(msg.getBytes());
+		Num msg = new Num("8675472634406074469");
+		Num n = new Num("6876277378425123763");
+		Num d = new Num("3175897683356795561");
+		Num e = new Num("854204321");
 
-		for (Num m : ms) {
-			Num enc = Num.modPow(m, e, n);
-			Num out = Num.modPow(enc, d, n);
-			System.out.println("Wyszło: \n\t" + enc + "\n\t" + out);
-		}
+		Num x = Num.modPow(msg, e, n);
+		Num m = Num.modPow(x, d, n);
+
+		System.out.println("X = " + x + ", msg = " + m);
 
 	}
 

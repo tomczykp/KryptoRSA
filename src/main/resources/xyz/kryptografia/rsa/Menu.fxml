@@ -45,6 +45,7 @@
             <HBox styleClass="operationHBox">
                 <Button fx:id="plainTextLoad" styleClass="button" text="Load"/>
                 <Button fx:id="plainTextSave" styleClass="button" text="Save"/>
+                <Button fx:id="switchPlainText" styleClass="button" text="Toggle base64"/>
             </HBox>
         </VBox>
         <VBox>

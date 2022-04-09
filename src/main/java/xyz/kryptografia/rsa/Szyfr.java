@@ -1,5 +1,7 @@
 package xyz.kryptografia.rsa;
 
+import xyz.kryptografia.rsa.liczby.Num;
+
 public interface Szyfr {
 
 	Num[] encrypt(Num[] plainText, Num[] key);

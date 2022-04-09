@@ -6,11 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import xyz.kryptografia.rsa.liczby.Num;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -18,7 +20,7 @@ import java.util.Objects;
 public class MenuController {
 
 	private final Stage window;
-	private boolean isBased;
+	private String isBased;
 	private final Szyfr szyfr;
 
 	@FXML
@@ -43,6 +45,8 @@ public class MenuController {
 	private Button plainTextSave;
 	@FXML
 	private Label plainTextLabel;
+	@FXML
+	private Button switchPlainText;
 
 	@FXML
 	private TextArea cipherText;
@@ -74,29 +78,31 @@ public class MenuController {
 			scene.getStylesheets().add("style.css");
 			this.window.setScene(scene);
 
-			this.privKeyLoad.setOnAction((e) -> this.privKey.setText(new String(this.loadFile(false))));
-			this.privKeySave.setOnAction((e) -> this.saveFile(this.privKey.getText(), true));
+			this.privKeyLoad.setOnAction((e) -> this.privKey.setText(this.loadKey()));
+			this.privKeySave.setOnAction((e) -> this.saveKey(this.privKey.getText()));
 
-			this.pubKeyLoad.setOnAction((e) -> this.pubKey.setText(new String(this.loadFile(false))));
-			this.pubKeySave.setOnAction((e) -> this.saveFile(this.pubKey.getText(), true));
+			this.pubKeyLoad.setOnAction((e) -> this.pubKey.setText(this.loadKey()));
+			this.pubKeySave.setOnAction((e) -> this.saveKey(this.pubKey.getText()));
 
 			this.generateKeys.setOnAction((e) -> this.genKey());
 			this.numBits.getItems().addAll(64, 128, 256, 512, 1024);
 			this.numBits.setValue(64);
 
 			this.plainTextLoad.setOnAction((e) -> {
-						this.plainText.setText(new String(this.loadFile(true)));
-						if (this.isBased)
-							this.plainTextLabel.setText("Plain text (base64)");
-						else
-							this.plainTextLabel.setText("Plain text");
-					}
-			);
+				this.plainText.setText(this.loadPlainText());
+				this.plainTextLabel.setText(this.isBased);
+			});
+			this.plainTextSave.setOnAction((e) -> this.savePlainText());
+			this.switchPlainText.setOnAction((e) -> {
+				if (this.plainTextLabel.getText().contains("base64"))
+					this.plainTextLabel.setText("Plain text");
+				else
+					this.plainTextLabel.setText("Plain text (base64)");
+			});
+			this.isBased = "Plain text";
 
-			this.plainTextSave.setOnAction((e) -> this.saveFile(this.plainText.getText()));
-
-			this.cipherTextLoad.setOnAction((e) -> this.cipherText.setText(new String(this.loadFile(false))));
-			this.cipherTextSave.setOnAction((e) -> this.saveFile(this.cipherText.getText(), true));
+			this.cipherTextLoad.setOnAction((e) -> this.cipherText.setText(this.loadCipherText()));
+			this.cipherTextSave.setOnAction((e) -> this.saveCipherText());
 
 			this.encryptButton.setOnAction((e) -> this.encrypt());
 			this.decryptButton.setOnAction((e) -> this.decrypt());
@@ -107,22 +113,25 @@ public class MenuController {
 	}
 
 	private void decrypt() {
+		System.out.println("\nDECRYPT");
 		if (Objects.equals(this.cipherText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
 
-		Num[] cipherTextData = Converter.decode(this.cipherText.getText());
 		Num[] privKeyData = Converter.decode(this.privKey.getText());
-
-		System.out.println("Priv: " + privKeyData[0] + ", " + privKeyData[1]);
+		Num[] cipherTextData = Converter.bytesToNums(
+				Base64.getDecoder().decode(this.cipherText.getText()),
+				this.numBits.getValue() / 8
+		);
 
 		Num[] nums = this.szyfr.decrypt(cipherTextData, privKeyData);
 
-		// text <-> encrypt
-		// bin <-> to_base64 <-> from_base64 <-> encrypt
+		System.out.println("Odczytane: " + Arrays.toString(cipherTextData));
+		System.out.println("Priv: " + Arrays.toString(privKeyData) + ", obliczone: " + Arrays.toString(nums));
+
 		byte[] data = Converter.numsToBytes(nums);
 		String tmp = new String(data);
+
 		if (tmp.matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
-			// był to text
 			this.plainTextLabel.setText("Plain text");
 			this.plainText.setText(tmp);
 		} else {
@@ -132,25 +141,22 @@ public class MenuController {
 	}
 
 	private void encrypt() {
+		System.out.println("\nENCRYPT");
 		if (Objects.equals(this.plainText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
 
-		byte[] plainTextData;
-
-		if (this.isBased)
-			plainTextData = Base64.getDecoder().decode(this.plainText.getText());
-		else
-			plainTextData = this.plainText.getText().getBytes();
-
 		Num[] pubKeyData = Converter.decode(this.pubKey.getText());
-		System.out.println("Pub: " + pubKeyData[0] + ", " + pubKeyData[1]);
+		Num[] plainTextData = Converter.bytesToNums(
+				this.plainText.getText().getBytes(),
+				this.numBits.getValue() / 8
+		);
 
-		Num[] data = this.szyfr.encrypt(Converter.bytesToNums(plainTextData), pubKeyData);
+		Num[] nums = this.szyfr.encrypt(plainTextData, pubKeyData);
 
-		// text <-> encrypt
-		// bin <-> to_base64 <-> from_base64 <-> encrypt
+		System.out.println("Odczytane: " + Arrays.toString(plainTextData));
+		System.out.println("Pub: " + Arrays.toString(pubKeyData) + ", obliczone: " + Arrays.toString(nums));
 
-		this.cipherText.setText(Converter.encode(data));
+		this.cipherText.setText(Base64.getEncoder().encodeToString(Converter.numsToBytes(nums)));
 	}
 
 	public void showStage() {
@@ -170,36 +176,36 @@ public class MenuController {
 		this.pubKey.setText(Converter.encode(tmp[1]));
 	}
 
-	public void saveFile(String data) {
-		this.saveFile(data, false);
-	}
-
-	public void saveFile(String data, boolean clean) {
+	public void saveKey(String data) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save file");
 		File file = fileChooser.showSaveDialog(this.window);
 
 		try (FileOutputStream outStream = new FileOutputStream(file)) {
 
-			byte[] tmp;
-			if (clean)
-				tmp = data.getBytes();
-			else {
-				try {
-					tmp = Base64.getDecoder().decode(data);
-				} catch (IllegalArgumentException e) {
-					tmp = data.getBytes();
-				}
-			}
-			outStream.write(tmp);
+			outStream.write(data.getBytes());
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public byte[] loadFile(boolean plainText) {
+	public String loadKey() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open file");
+		File file = fileChooser.showOpenDialog(this.window);
 
+		try (FileInputStream inStream = new FileInputStream(file)) {
+			byte[] data = inStream.readAllBytes();
+			return new String(data);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String loadPlainText() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open file");
 		File file = fileChooser.showOpenDialog(this.window);
@@ -207,26 +213,69 @@ public class MenuController {
 		try (FileInputStream inStream = new FileInputStream(file)) {
 			byte[] data = inStream.readAllBytes();
 			byte[] tmp;
-			boolean wasBased;
 
 			if (new String(data).matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
-				wasBased = false;
+				this.isBased = "Plain text";
 				tmp = data;
 			} else {
-				wasBased = true;
+				this.isBased = "Plain text (base64)";
 				tmp = Base64.getEncoder().encode(data);
 			}
-
-			if (plainText)
-				this.isBased = wasBased;
-
-			return tmp;
+			return new String(tmp);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
-
 	}
+
+	private String loadCipherText() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open file");
+		File file = fileChooser.showOpenDialog(this.window);
+
+		try (FileInputStream inStream = new FileInputStream(file)) {
+			byte[] data = inStream.readAllBytes();
+			return Base64.getEncoder().encodeToString(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void saveCipherText() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Save file");
+		File file = fileChooser.showSaveDialog(this.window);
+		byte[] data = Base64.getDecoder().decode(this.cipherText.getText());
+
+		try (FileOutputStream outStream = new FileOutputStream(file)) {
+
+			outStream.write(data);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void savePlainText() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Save file");
+		File file = fileChooser.showSaveDialog(this.window);
+
+		byte[] data;
+
+		try (FileOutputStream outStream = new FileOutputStream(file)) {
+			if (this.isBased.contains("base64"))
+				data = Base64.getDecoder().decode(this.plainText.getText());
+			else
+				data = this.plainText.getText().getBytes();
+			outStream.write(data);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 }

@@ -1,6 +1,5 @@
-package xyz.kryptografia.rsa;
+package xyz.kryptografia.rsa.liczby;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,10 +38,12 @@ public class Num implements Comparable<Num> {
 		Num t = new Num();
 		Num shift = new Num(256);
 
-		for (byte b : d) {
+		for (int i = d.length - 1; i >= 0; i--) {
+			byte b = d[i];
 			t = Num.mulKaratsuba(t, shift);
 			t = Num.add(t, Byte.toUnsignedInt(b));
 		}
+
 		this.liczba = t.liczba;
 	}
 
@@ -90,7 +91,7 @@ public class Num implements Comparable<Num> {
 		this.liczba.add(0);
 	}
 
-	private boolean isZero() {
+	public boolean isZero() {
 		return (this.liczba.size() == 1 && this.get(0) == 0);
 	}
 
@@ -169,7 +170,7 @@ public class Num implements Comparable<Num> {
 		byte[] buffer = new byte[n];
 		int i = 0;
 		while (!copy1.isZero()) {
-			buffer[n - i - 1] = (byte) (Num.mod(copy1, b).toLong() % 0xff);
+			buffer[i] = (byte) (Num.mod(copy1, b).toLong() % 0xff);
 			copy1 = Num.divide(copy1, b);
 			i++;
 		}
@@ -548,8 +549,7 @@ public class Num implements Comparable<Num> {
 			k++;
 
 
-//		Num a = Num.generateFromRange(two, p_1);
-		Num a = two;
+		Num a = Num.generateFromRange(two, p_1);
 		Num m = Num.divide(p_1, Num.fastPow(two, k));
 		Num x = Num.modPow(a, m, this);
 
@@ -565,6 +565,15 @@ public class Num implements Comparable<Num> {
 				return true;
 		}
 		return false;
+	}
+
+	public boolean isPrime() {
+
+		for (int i = 0; i < 6; i++)
+			if (!this.testRabinMiller())
+				return false;
+
+		return true;
 	}
 
 	public static Num gcd(Num a, Num b) {

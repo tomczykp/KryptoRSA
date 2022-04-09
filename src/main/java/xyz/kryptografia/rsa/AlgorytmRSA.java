@@ -1,6 +1,6 @@
 package xyz.kryptografia.rsa;
 
-import java.util.Arrays;
+import xyz.kryptografia.rsa.liczby.Num;
 
 public class AlgorytmRSA implements Szyfr {
 
@@ -26,7 +26,6 @@ public class AlgorytmRSA implements Szyfr {
 		for (int i = 0; i < l; i++)
 			wynik[i] = Num.modPow(text[i], keys[0], keys[1]);
 
-		System.out.println("Po operacjach mat: " + Arrays.toString(wynik));
 		return wynik;
 	}
 
@@ -37,19 +36,19 @@ public class AlgorytmRSA implements Szyfr {
 		Num p, q;
 
 		do {
-			p = Num.randOdd(len);
+			p = Num.randOdd(len / 2);
 			System.out.println("Trying p");
-		} while (!p.testRabinMiller());
+		} while (!p.isPrime());
 
 		do {
-			q = Num.randOdd(len);
+			q = Num.randOdd(len / 2);
 			System.out.println("Trying q");
-		} while (!q.testRabinMiller());
+		} while (!q.isPrime());
 
 		while (q.equals(p)) {
 			do {
-				p = Num.randOdd(len);
-			} while (!p.testRabinMiller());
+				p = Num.randOdd(len / 2);
+			} while (!p.isPrime());
 		}
 
 		Num n = Num.mulKaratsuba(p, q);
@@ -69,7 +68,7 @@ public class AlgorytmRSA implements Szyfr {
 		System.out.println("\tn = " + n + "\n\td = " + d + "\n\te = " + e);
 
 
-		return new Num[][]{{e, n}, {d, n, fi}};
+		return new Num[][]{{e, n}, {d, n}};
 	}
 
 
