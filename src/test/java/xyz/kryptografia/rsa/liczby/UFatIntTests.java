@@ -10,13 +10,36 @@ public class UFatIntTests {
 	int n = 5000;
 	int len = 100;
 
-	public String toLiteral(byte[] bytes) {
-
-		StringBuilder sb = new StringBuilder();
+	public String toHex(byte[] bytes) {
+		String sb = "";
 		for (byte b : bytes)
-			sb.append(String.format("%02X ", b));
+			sb = String.format("%02X ", b) + sb;
 
-		return sb.toString();
+		return sb;
+	}
+
+
+	@Test
+	public void constructoTest() {
+		Num n1, n2;
+		UFatInt f1, f2;
+		Random r = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			n1 = Num.generateOdd(r.nextInt(this.len));
+			n2 = Num.generateOdd(r.nextInt(this.len));
+
+			f1 = new UFatInt(n1);
+			f2 = new UFatInt(n2);
+
+			Assertions.assertEquals(toHex(n1.getBytes()), f1.toHex());
+			Assertions.assertEquals(toHex(n2.getBytes()), f2.toHex());
+
+			Assertions.assertEquals(n1.toString(), f1.toString());
+			Assertions.assertEquals(n2.toString(), f2.toString());
+			System.out.println("Test " + i + " const()");
+		}
+
 	}
 
 	@Test
@@ -28,26 +51,21 @@ public class UFatIntTests {
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(this.len);
-			l2 = Num.generateOdd(this.len);
+			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l2 = Num.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
-			System.out.println("Num1 = " + toLiteral(l1.getBytes()) + "\nufi1 = " + i1.toHex());
-			System.out.println("\nnum2 = " + toLiteral(l2.getBytes()) + "\nufi2 = " + i2.toHex());
-
 			Assertions.assertEquals(l1.compareTo(l2), i1.compareTo(i2));
-			Assertions.assertEquals(toLiteral(l1.getBytes()), i1.toHex());
-			Assertions.assertEquals(l1.toString(), i1.toString());
-			Assertions.assertEquals(toLiteral(l2.getBytes()), i1.toHex());
-			Assertions.assertEquals(l2.toString(), i2.toString());
+			Assertions.assertEquals(toHex(l1.getBytes()), i1.toHex());
+			Assertions.assertEquals(toHex(l2.getBytes()), i2.toHex());
 			System.out.println("Test " + i + " compare()");
 		}
 
 		for (int i = 0; i < this.n; i++) {
-			lo1 = rand.nextInt(20091);
-			lo2 = rand.nextInt(298);
+			lo1 = rand.nextInt(Integer.MAX_VALUE);
+			lo2 = rand.nextInt(Integer.MAX_VALUE);
 
 			i1 = new UFatInt(lo1);
 			i2 = new UFatInt(lo2);
@@ -72,8 +90,8 @@ public class UFatIntTests {
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(this.len);
-			l2 = Num.generateOdd(this.len);
+			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l2 = Num.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
@@ -81,8 +99,9 @@ public class UFatIntTests {
 			UFatInt tmp = UFatInt.add(i1, i2);
 
 			Assertions.assertEquals(Num.add(l1, l2).toString(), tmp.toString());
-			Assertions.assertEquals(i1.toString(), l1.toString());
-			Assertions.assertEquals(i2.toString(), l2.toString());
+			Assertions.assertEquals(toHex(Num.add(l1, l2).getBytes()), tmp.toHex());
+			Assertions.assertEquals(toHex(l1.getBytes()), i1.toHex());
+			Assertions.assertEquals(toHex(l2.getBytes()), i2.toHex());
 			System.out.println("Test " + i + " add()");
 		}
 
@@ -95,9 +114,10 @@ public class UFatIntTests {
 			UFatInt tmp = UFatInt.add(i1, liczba);
 
 			Assertions.assertEquals(Num.add(l1, liczba).toString(), tmp.toString());
-			Assertions.assertEquals(l1.toString(), i1.toString());
+			Assertions.assertEquals(toHex(l1.getBytes()), i1.toHex());
 			System.out.println("Test " + i + " add()");
 		}
+
 	}
 
 	@Test
@@ -107,8 +127,8 @@ public class UFatIntTests {
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(this.len);
-			l2 = Num.generateOdd(this.len);
+			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l2 = Num.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
@@ -142,8 +162,8 @@ public class UFatIntTests {
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(this.len);
-			l2 = Num.generateOdd(this.len);
+			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l2 = Num.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
@@ -177,8 +197,8 @@ public class UFatIntTests {
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(this.len);
-			l2 = Num.generateOdd(this.len);
+			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l2 = Num.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
@@ -349,17 +369,109 @@ public class UFatIntTests {
 	}
 
 	@Test
+	public void timeTest() {
+
+		UFatInt x, y;
+		Random r = new Random();
+		long start;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			byte[] b = new byte[this.len];
+			r.nextBytes(b);
+			x = new UFatInt(b);
+			r.nextBytes(b);
+			y = new UFatInt(b);
+			UFatInt w = UFatInt.add(x, y);
+		}
+		System.out.println("Dodawanie: " + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			byte[] b = new byte[this.len];
+			r.nextBytes(b);
+			x = new UFatInt(b);
+			r.nextBytes(b);
+			y = new UFatInt(b);
+			UFatInt w = UFatInt.subtract(x, y);
+		}
+		System.out.println("Odejmowanie: " + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			byte[] b = new byte[this.len];
+			r.nextBytes(b);
+			x = new UFatInt(b);
+			r.nextBytes(b);
+			y = new UFatInt(b);
+			UFatInt w = UFatInt.mul(x, y);
+		}
+		System.out.println("Mul: " + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			byte[] b = new byte[this.len];
+			r.nextBytes(b);
+			x = new UFatInt(b);
+			r.nextBytes(b);
+			y = new UFatInt(b);
+			UFatInt w = UFatInt.mulKaratsuba(x, y);
+		}
+		System.out.println("mulKaratsuba: " + (System.currentTimeMillis() - start));
+
+	}
+
+	@Test
+	public void timeTestNum() {
+
+		Num x, y;
+		Random r = new Random();
+		long start;
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			x = Num.randOdd(100);
+			y = Num.randOdd(100);
+			Num w = Num.add(x, y);
+		}
+		System.out.println("Dodawanie: " + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			x = Num.randOdd(100);
+			y = Num.randOdd(100);
+			Num w = Num.subtract(x, y);
+		}
+		System.out.println("Odejmowanie: " + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			x = Num.randOdd(100);
+			y = Num.randOdd(100);
+			Num w = Num.mul(x, y);
+		}
+		System.out.println("Mul: " + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		for (int i = 0; i < this.n; i++) {
+			x = Num.randOdd(100);
+			y = Num.randOdd(100);
+			Num w = Num.mulKaratsuba(x, y);
+		}
+		System.out.println("mulKaratsuba: " + (System.currentTimeMillis() - start));
+
+	}
+
+	@Test
 	public void algoTest() {
 
-		byte a = (byte) 0x0B;
-		byte b = (byte) 0x0C;
+		UFatInt x, y;
+		Random r = new Random();
+		byte[] b = new byte[400];
+		r.nextBytes(b);
+		x = new UFatInt(b);
+		r.nextBytes(b);
+		y = new UFatInt(b);
+		UFatInt w = UFatInt.mul(x, y);
 
-		int d = Byte.compareUnsigned(a, b);
-		if (d < 0)
-			System.out.println("-1");
-		if (d > 0)
-			System.out.println("1");
-		System.out.println("0");
 	}
 
 

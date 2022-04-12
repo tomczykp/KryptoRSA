@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 public class NumTests {
 
-	int n = 5000000;
-	int nP = 10000;
+	int n = 10000;
+	int nP = 1000;
 
 	public static boolean isPrime(int n) {
 		// Corner case
