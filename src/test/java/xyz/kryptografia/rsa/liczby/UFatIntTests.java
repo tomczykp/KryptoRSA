@@ -461,16 +461,33 @@ public class UFatIntTests {
 	}
 
 	@Test
+	public void shiftLeftTest() {
+		Num l1;
+		UFatInt i1;
+		int m;
+		Random rand = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			l1 = Num.generateOdd(this.len);
+			m = rand.nextInt(100);
+			i1 = new UFatInt(l1);
+			Num w = Num.mulKaratsuba(l1, Num.fastPow(new Num(2), m));
+
+			i1.shiftL(m);
+
+			Assertions.assertEquals(w, i1.toString());
+			Assertions.assertEquals(i1.toString(), l1.toString());
+			System.out.println("Test " + i + " modInverse()");
+		}
+
+	}
+
+	@Test
 	public void algoTest() {
 
-		UFatInt x, y;
-		Random r = new Random();
-		byte[] b = new byte[400];
-		r.nextBytes(b);
-		x = new UFatInt(b);
-		r.nextBytes(b);
-		y = new UFatInt(b);
-		UFatInt w = UFatInt.mul(x, y);
+		UFatInt l = new UFatInt(0x08);
+		int N = l.getBitSize();
+		System.out.println("B.size = " + N + ", l = " + l.toHex());
 
 	}
 

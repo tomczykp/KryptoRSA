@@ -1,14 +1,14 @@
 package xyz.kryptografia.rsa.liczby;
 
-import java.util.Random;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
+
 public class NumTests {
 
-	int n = 10000;
-	int nP = 1000;
+	int n = 2000000;
+	int nP = 10000;
 
 	public static boolean isPrime(int n) {
 		// Corner case

@@ -1,7 +1,9 @@
 package xyz.kryptografia.rsa.liczby;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class UFatInt implements Comparable<UFatInt> {
 
@@ -215,8 +217,8 @@ public class UFatInt implements Comparable<UFatInt> {
 	}
 
 	public static UFatInt mulKaratsuba(UFatInt x, UFatInt y) {
-		int sx = x.liczba.size();
-		int sy = y.liczba.size();
+		int sx = x.getBitSize();
+		int sy = y.getBitSize();
 		int N = Math.min(sx, sy);
 
 		/** for small values directly multiply **/
@@ -350,29 +352,30 @@ public class UFatInt implements Comparable<UFatInt> {
 	}
 
 	public void shiftL() {
-		byte r = 0;
+		byte overFlow = 0;
 
 		for (int i = 0; i < this.liczba.size(); i++) {
 
 			byte t = (byte) (this.get(i) << 1);
-			t = (byte) (t | r);
-			r = (byte) (this.get(i) >> 7);
+			t = (byte) (t | overFlow);
+			overFlow = (byte) ((this.get(i) & 0x80) >>> 7);
 			this.liczba.set(i, t);
 		}
 
-		if (r != 0)
-			this.liczba.add(r);
+		if (overFlow == 0x01)
+			this.liczba.add(overFlow);
+
 
 	}
 
 	public void shiftR() {
-		byte r;
+		byte borrow = 0;
 
 		for (int i = this.liczba.size() - 1; i >= 0; i--) {
 
-			r = (byte) (this.get(i) & 0x01);
-			byte t = (byte) (this.get(i) >> 1);
-			t = (byte) (t & (r << 7));
+			byte t = (byte) (this.get(i) >>> 1);
+			t = (byte) (t | (borrow << 7));
+			borrow = (byte) (this.get(i) & 0x01);
 			this.liczba.set(i, t);
 		}
 
@@ -419,8 +422,23 @@ public class UFatInt implements Comparable<UFatInt> {
 		return this.liczba.get(i);
 	}
 
-	private UFatInt split(int start, int stop) {
+	public UFatInt split(int start, int stop) {
 		return new UFatInt(this.liczba.subList(start, stop));
 	}
 
+	public int getBitSize() {
+
+		int s = (this.liczba.size() - 1) * 8;
+		int i;
+		byte t, b = this.liczba.get(this.liczba.size() - 1);
+
+		for (i = 7; i >= 0; i--) {
+			t = (byte) ((b >>> i) & 0x01);
+			if (t == 1)
+				break;
+
+		}
+
+		return s + i + 1;
+	}
 }
