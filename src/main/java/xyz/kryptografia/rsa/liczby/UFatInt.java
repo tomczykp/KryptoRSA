@@ -98,9 +98,9 @@ public class UFatInt implements Comparable<UFatInt> {
 
 			sum = 0;
 			if (i < sx)
-				sum += Byte.toUnsignedInt(x.get(i));
+				sum += (x.get(i) & 0xFF);
 			if (i < sy)
-				sum += Byte.toUnsignedInt(y.get(i));
+				sum += (y.get(i) & 0xFF);
 
 			sum += overflow;
 
@@ -108,9 +108,8 @@ public class UFatInt implements Comparable<UFatInt> {
 			overflow = (sum >> 8);
 		}
 
-		if (overflow != 0) {
+		if (overflow != 0)
 			wynik.liczba.add((byte) overflow);
-		}
 
 		return wynik;
 	}
@@ -153,10 +152,10 @@ public class UFatInt implements Comparable<UFatInt> {
 				return new UFatInt();
 
 			if (sx > i)
-				sum += Byte.toUnsignedInt(x.get(i));
+				sum += (x.get(i) & 0xFF);
 
 			if (sy > i)
-				sum -= Byte.toUnsignedInt(y.get(i));
+				sum -= (y.get(i) & 0xFF);
 
 			if (borrow)
 				sum--;
@@ -171,8 +170,7 @@ public class UFatInt implements Comparable<UFatInt> {
 
 		}
 
-		wynik.removeLeadingZeros();
-		return wynik;
+		return wynik.removeLeadingZeros();
 	}
 
 	public static UFatInt subtract(UFatInt l1, long l2) {
@@ -184,36 +182,33 @@ public class UFatInt implements Comparable<UFatInt> {
 				|| (x.liczba.size() == 1 && x.get(0) == 0))
 			return new UFatInt();
 
+		int d;
 		UFatInt suma = new UFatInt();
-		UFatInt smallSuma;
-
 		for (int i = y.liczba.size() - 1; i >= 0; i--) {
 
-			int yb = Byte.toUnsignedInt(y.get(i));
-			suma.shiftL(8);
+			d = y.get(i) & 0xFF;
 
-			if (yb == 0)
-				continue;
-
-			smallSuma = new UFatInt();
-			for (int j = x.liczba.size() - 1; j >= 0; j--) {
-				smallSuma.shiftL(8);
-
-				int xb = Byte.toUnsignedInt(x.get(j));
-				if (xb == 0)
-					continue;
-
-				smallSuma = UFatInt.add(smallSuma, xb * yb);
-			}
-
-			suma = UFatInt.add(suma, smallSuma);
+			suma.liczba.add(0, (byte) 0);
+			if (d != 0)
+				suma = UFatInt.add(suma, UFatInt.mul(x, d));
 		}
 
-		return suma;
+		return suma.removeLeadingZeros();
 	}
 
-	public static UFatInt mul(UFatInt l1, long l2) {
-		return UFatInt.mul(l1, new UFatInt(l2));
+	public static UFatInt mul(UFatInt x, long y) {
+		if (y < 0 || (x.liczba.size() == 1 && x.get(0) == 0))
+			return new UFatInt();
+
+		int s = x.liczba.size();
+		UFatInt suma = new UFatInt();
+
+		for (int i = s - 1; i >= 0; i--) {
+			suma.liczba.add(0, (byte) 0);
+			suma = UFatInt.add(suma, (x.get(i) & 0xFF) * y);
+		}
+
+		return suma.removeLeadingZeros();
 	}
 
 	public static UFatInt mulKaratsuba(UFatInt x, UFatInt y) {
@@ -221,20 +216,20 @@ public class UFatInt implements Comparable<UFatInt> {
 		int sy = y.getBitSize();
 		int N = Math.min(sx, sy);
 
-		/** for small values directly multiply **/
-		if (N < 10)
+		if (N < 8)
 			return UFatInt.mul(x, y);
 
-		/** max length divided, rounded up **/
-		N = (N / 2) + (N % 2);
+		N = (N / 2);
 
 
 		/** compute sub expressions **/
-		UFatInt ax = x.split(N, sx);
-		UFatInt bx = x.split(0, N);
+		UFatInt[] t = x.split(N);
+		UFatInt ax = t[0];
+		UFatInt bx = t[1];
 
-		UFatInt ay = y.split(N, sy);
-		UFatInt by = y.split(0, N);
+		t = y.split(N);
+		UFatInt ay = t[0];
+		UFatInt by = t[1];
 
 		/** compute sub expressions **/
 		UFatInt z0 = UFatInt.mulKaratsuba(bx, by);  // z0
@@ -243,11 +238,10 @@ public class UFatInt implements Comparable<UFatInt> {
 				UFatInt.add(ay, by));
 		UFatInt z2 = UFatInt.mulKaratsuba(ax, ay);  // z2
 
-		z1 = UFatInt.subtract(z1, z2);
-		z1 = UFatInt.subtract(z1, z0);
+		z1 = UFatInt.subtract(UFatInt.subtract(z1, z2), z0);
 
-		z2.shiftL(2 * N * 8);
-		z1.shiftL(N * 8);
+		z2.shiftL(2 * N);
+		z1.shiftL(N);
 
 		return UFatInt.add(z2, UFatInt.add(z0, z1));
 	}
@@ -264,24 +258,125 @@ public class UFatInt implements Comparable<UFatInt> {
 		return new UFatInt();
 	}
 
-	public static UFatInt modInverse(UFatInt l1, UFatInt l2) {
-		return new UFatInt();
+	public static UFatInt mod(UFatInt l1, long l2) {
+		return UFatInt.mod(l1, new UFatInt(l2));
 	}
 
-	public static UFatInt gcd(UFatInt l1, UFatInt l2) {
-		return new UFatInt();
+	public static UFatInt mod(UFatInt x, UFatInt y) {
+		UFatInt d = UFatInt.divide(x, y);
+		d = UFatInt.mulKaratsuba(y, d);
+		d = UFatInt.subtract(x, d);
+		return d;
+	}
+
+	public static UFatInt fastPow(UFatInt a, long n) {
+		if (n == 0)
+			return new UFatInt(1);
+
+		UFatInt tmp = UFatInt.fastPow(a, n / 2);
+		if (n % 2 == 0)
+			return UFatInt.mulKaratsuba(tmp, tmp);
+		else
+			return UFatInt.mulKaratsuba(a, UFatInt.mulKaratsuba(tmp, tmp));
+	}
+
+	public static UFatInt modInverse(UFatInt a0, UFatInt m0) {
+		UFatInt one = new UFatInt(1);
+		UFatInt x = new UFatInt(1), y = new UFatInt();
+		UFatInt m = new UFatInt(m0);
+		UFatInt a = new UFatInt(a0);
+		boolean xNeg = false, yNeg = false, tNeg;
+
+		if (m.equals(one))
+			return new UFatInt();
+
+		while (a.compareTo(one) > 0) {
+
+			UFatInt q = UFatInt.divide(a, m);
+			UFatInt t = new UFatInt(m);
+
+			m = UFatInt.mod(a, m);
+			a = new UFatInt(t);
+
+			tNeg = yNeg;
+			t = new UFatInt(y);
+
+			UFatInt tmp = UFatInt.mulKaratsuba(q, y);
+
+			if (yNeg) {
+				if (xNeg) {
+					//	y = q*y - x
+					if (tmp.compareTo(x) > 0) {
+						y = UFatInt.subtract(tmp, x);
+						yNeg = false;
+					} else {
+						y = UFatInt.subtract(x, tmp);
+						yNeg = true;
+					}
+				} else {
+					// y = q*y + x
+					y = UFatInt.add(tmp, x);
+					yNeg = false;
+				}
+			} else {
+				if (xNeg) {
+					// y = - q*y - x
+					y = UFatInt.add(tmp, x);
+					yNeg = true;
+				} else {
+					// y = -q*y + x
+					if (tmp.compareTo(x) > 0) {
+						y = UFatInt.subtract(tmp, x);
+						yNeg = true;
+					} else {
+						y = UFatInt.subtract(x, tmp);
+						yNeg = false;
+					}
+				}
+			}
+
+			xNeg = tNeg;
+			x = new UFatInt(t);
+		}
+
+		if (xNeg)
+			x = UFatInt.subtract(m0, x);
+
+		return x;
+	}
+
+	public static UFatInt gcd(UFatInt a, UFatInt b) {
+
+		UFatInt cA = new UFatInt(a);
+		UFatInt cB = new UFatInt(b);
+
+		while (!cB.isZero()) {
+			UFatInt tmp = cB;
+			cB = UFatInt.mod(cA, cB);
+			cA = tmp;
+		}
+
+		return cA;
 	}
 
 	public static UFatInt modPow(UFatInt a, UFatInt b, UFatInt n) {
-		return new UFatInt();
-	}
+		UFatInt res = new UFatInt(1);
 
-	public static UFatInt mod(UFatInt l1, long l2) {
-		return new UFatInt();
-	}
+		UFatInt x = UFatInt.mod(a, n);
+		UFatInt y = new UFatInt(b);
 
-	public static UFatInt mod(UFatInt l1, UFatInt l2) {
-		return new UFatInt();
+		if (x.isZero())
+			return x;
+
+		while (!y.isZero()) {
+			if (y.isOdd())
+				res = UFatInt.mod(UFatInt.mulKaratsuba(res, x), n);
+
+			y = UFatInt.divide(y, 2);
+			x = UFatInt.mod(UFatInt.mulKaratsuba(x, x), n);
+		}
+
+		return res;
 	}
 
 
@@ -338,7 +433,7 @@ public class UFatInt implements Comparable<UFatInt> {
 	// ##########################
 	// #   METODY POMOCNICZE    #
 	// ##########################
-	public void shiftL(int n) {
+	public UFatInt shiftL(int n) {
 
 		int full = n / 8;
 		int rem = n % 8;
@@ -349,9 +444,10 @@ public class UFatInt implements Comparable<UFatInt> {
 		for (int i = 0; i < full; i++)
 			this.liczba.add(0, (byte) 0);
 
+		return this;
 	}
 
-	public void shiftL() {
+	public UFatInt shiftL() {
 		byte overFlow = 0;
 
 		for (int i = 0; i < this.liczba.size(); i++) {
@@ -365,41 +461,55 @@ public class UFatInt implements Comparable<UFatInt> {
 		if (overFlow == 0x01)
 			this.liczba.add(overFlow);
 
-
+		return this;
 	}
 
-	public void shiftR() {
+	public UFatInt shiftR() {
 		byte borrow = 0;
 
 		for (int i = this.liczba.size() - 1; i >= 0; i--) {
 
 			byte t = (byte) (this.get(i) >>> 1);
-			t = (byte) (t | (borrow << 7));
+			if (borrow == 1)
+				t = (byte) (t | (borrow << 7));
+			else
+				t = (byte) (t & ~(1 << 7));
 			borrow = (byte) (this.get(i) & 0x01);
 			this.liczba.set(i, t);
 		}
 
-		this.removeLeadingZeros();
+		return this.removeLeadingZeros();
 	}
 
-	public void shiftR(int n) {
+	public UFatInt shiftR(int n) {
 
 		int full = n / 8;
 		int rem = n % 8;
 
 		for (int i = 0; i < full; i++)
-			this.liczba.remove(0);
+			if (this.liczba.size() != 0)
+				this.liczba.remove(0);
 
 		for (int i = 0; i < rem; i++)
 			this.shiftR();
+		return this;
 	}
 
-	public void setZero() {
+	public UFatInt setZero() {
 		this.liczba = new ArrayList<>();
 		this.liczba.add((byte) 0);
+		return this;
 	}
 
-	public void removeLeadingZeros() {
+	public boolean isOdd() {
+		return ((this.liczba.get(0) & 0x01) == 1);
+	}
+
+	public boolean isZero() {
+		return (this.liczba.size() == 1 && this.get(0) == 0);
+	}
+
+	public UFatInt removeLeadingZeros() {
 		for (int i = this.liczba.size() - 1; i >= 0; i--) {
 			if (this.liczba.get(i) != 0)
 				break;
@@ -408,6 +518,7 @@ public class UFatInt implements Comparable<UFatInt> {
 
 		if (this.liczba.size() == 0)
 			this.liczba.add((byte) 0);
+		return this;
 	}
 
 	public byte[] getBytes() {
@@ -422,11 +533,20 @@ public class UFatInt implements Comparable<UFatInt> {
 		return this.liczba.get(i);
 	}
 
-	public UFatInt split(int start, int stop) {
-		return new UFatInt(this.liczba.subList(start, stop));
+	public UFatInt[] split(int n) {
+		if (n > this.getBitSize())
+			return new UFatInt[]{new UFatInt(), new UFatInt(this)};
+
+		UFatInt higher = new UFatInt(this).shiftR(n);
+		return new UFatInt[]{
+				new UFatInt(higher),
+				UFatInt.subtract(this, higher.shiftL(n))
+		};
 	}
 
 	public int getBitSize() {
+		if (this.liczba.size() == 0)
+			return 0;
 
 		int s = (this.liczba.size() - 1) * 8;
 		int i;
@@ -436,7 +556,6 @@ public class UFatInt implements Comparable<UFatInt> {
 			t = (byte) ((b >>> i) & 0x01);
 			if (t == 1)
 				break;
-
 		}
 
 		return s + i + 1;

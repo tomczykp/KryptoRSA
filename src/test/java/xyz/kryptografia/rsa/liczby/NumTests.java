@@ -372,6 +372,7 @@ public class NumTests {
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
+			System.out.println("Test " + i + " binTest()");
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 
 			l1 = new Num(i1);
@@ -387,6 +388,7 @@ public class NumTests {
 		Num p, k;
 
 		for (int i = 0; i < 100; i++) {
+			System.out.println("Test " + i + " genRangeTest()");
 			p = Num.generateOdd(18);
 			k = Num.generateOdd(20);
 
