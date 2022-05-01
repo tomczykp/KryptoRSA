@@ -82,8 +82,12 @@ public class Num implements Comparable<Num> {
 		return 0;
 	}
 
-	private Integer get(int i) {
+	public Integer get(int i) {
 		return this.liczba.get(i);
+	}
+
+	public int size() {
+		return this.liczba.size();
 	}
 
 	private void setZero() {

@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class UFatIntTests {
 
-	int n = 5000;
+	int n = 500000;
 	int len = 100;
 
 	public String toHex(byte[] bytes) {
@@ -351,12 +351,18 @@ public class UFatIntTests {
 		Num l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
+		Num one = new Num(1);
 		for (int i = 0; i < this.n; i++) {
 			l1 = Num.generateOdd(rand.nextInt(2, this.len));
 			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			if (!Num.gcd(l1, l2).equals(one)) {
+				i--;
+				continue;
+			}
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
+
 
 			UFatInt tmp = UFatInt.modInverse(i1, i2);
 
@@ -376,14 +382,14 @@ public class UFatIntTests {
 		Random rand = new Random();
 		for (int i = 0; i < this.n; i++) {
 			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			i2 = rand.nextLong();
+			i2 = rand.nextLong(1, 30);
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.fastPow(i1, i2);
 
 			Assertions.assertEquals(Num.fastPow(l1, i2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
-			System.out.println("Test " + i + " modInverse()");
+			System.out.println("Test " + i + " fastPow()");
 		}
 
 	}
@@ -395,7 +401,7 @@ public class UFatIntTests {
 		Random r = new Random();
 		long start;
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			byte[] b = new byte[this.len];
 			r.nextBytes(b);
 			x = new UFatInt(b);
@@ -407,7 +413,7 @@ public class UFatIntTests {
 		System.out.println("Dodawanie: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			byte[] b = new byte[this.len];
 			r.nextBytes(b);
 			x = new UFatInt(b);
@@ -419,7 +425,7 @@ public class UFatIntTests {
 		System.out.println("Odejmowanie: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			byte[] b = new byte[this.len];
 			r.nextBytes(b);
 			x = new UFatInt(b);
@@ -432,7 +438,7 @@ public class UFatIntTests {
 
 
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			byte[] b = new byte[this.len];
 			r.nextBytes(b);
 			x = new UFatInt(b);
@@ -450,7 +456,7 @@ public class UFatIntTests {
 		Num x, y;
 		long start;
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			x = Num.randOdd(this.len);
 			y = Num.randOdd(this.len);
 			Num w = Num.add(x, y);
@@ -458,7 +464,7 @@ public class UFatIntTests {
 		System.out.println("Dodawanie: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			x = Num.randOdd(this.len);
 			y = Num.randOdd(this.len);
 			Num w = Num.subtract(x, y);
@@ -466,7 +472,7 @@ public class UFatIntTests {
 		System.out.println("Odejmowanie: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			x = Num.randOdd(this.len);
 			y = Num.randOdd(this.len);
 			Num w = Num.mul(x, y);
@@ -474,7 +480,7 @@ public class UFatIntTests {
 		System.out.println("Mul: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
-		for (int i = 0; i < this.n; i++) {
+		for (int i = 0; i < this.n / 10000; i++) {
 			x = Num.randOdd(this.len);
 			y = Num.randOdd(this.len);
 			Num w = Num.mulKaratsuba(x, y);
@@ -518,19 +524,11 @@ public class UFatIntTests {
 
 	@Test
 	public void algoTest() {
+		UFatInt s = new UFatInt(79);
+		UFatInt t = new UFatInt(3);
 
-		UFatInt l1 = new UFatInt(0x991278);
-		UFatInt h = new UFatInt(l1).shiftR(12);
-		UFatInt l = UFatInt.subtract(l1, h.shiftL(12));
-		System.out.println("h = " + h.toHex() + ", l = " + l.toHex());
-//		l.shiftR();
-//		System.out.println("Liczba = " + l.toHex());
-//		l.shiftR();
-//		System.out.println("Liczba = " + l.toHex());
-//		l.shiftR();
-//		System.out.println("Liczba = " + l.toHex());
-//		l.shiftR();
-//		System.out.println("Liczba = " + UFatInt.mulKaratsuba(l1, l2).toHex());
+		UFatInt w = UFatInt.mulKaratsuba(s, t);
+		System.out.println("W = " + w);
 
 	}
 

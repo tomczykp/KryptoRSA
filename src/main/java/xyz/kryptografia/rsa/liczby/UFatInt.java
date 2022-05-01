@@ -28,7 +28,12 @@ public class UFatInt implements Comparable<UFatInt> {
 	}
 
 	public UFatInt(Num n) {
-		this(n.getBytes());
+		UFatInt w = new UFatInt();
+		for (int i = n.size() - 1; i >= 0; i--) {
+			w = UFatInt.add(w.tenPow(), n.get(i));
+		}
+
+		this.liczba = w.liczba;
 	}
 
 	public UFatInt(byte[] bytes) {
@@ -237,7 +242,7 @@ public class UFatInt implements Comparable<UFatInt> {
 				UFatInt.add(ax, bx),
 				UFatInt.add(ay, by));
 		UFatInt z2 = UFatInt.mulKaratsuba(ax, ay);  // z2
-
+		
 		z1 = UFatInt.subtract(UFatInt.subtract(z1, z2), z0);
 
 		z2.shiftL(2 * N);
@@ -250,12 +255,58 @@ public class UFatInt implements Comparable<UFatInt> {
 		return UFatInt.mulKaratsuba(l1, new UFatInt(l2));
 	}
 
-	public static UFatInt divide(UFatInt l1, UFatInt l2) {
-		return new UFatInt();
+	public static UFatInt divide(UFatInt x, UFatInt y) {
+		if (y.isZero())
+			throw new ArithmeticException();
+
+		if (x.isZero())
+			return new UFatInt();
+
+		int sx = x.liczba.size();
+		int sy = y.liczba.size();
+		if (sy > sx) // dzielenie przez większą liczbę
+			return new UFatInt();
+
+		UFatInt wynik = new UFatInt();
+		UFatInt subsum = new UFatInt();
+		int n;
+		boolean d;
+
+		for (int i = sx - 1; i >= 0; i--) {
+
+			d = true;
+			subsum = UFatInt.add(subsum, (x.get(i) & 0xff));
+
+			if (subsum.compareTo(y) >= 0) {
+				d = false;
+				n = 1;
+				while (true) {
+					UFatInt s = UFatInt.mulKaratsuba(y, n);
+					int t = s.compareTo(subsum);
+
+					if (t == 0)
+						break;
+					else if (t > 0) {
+						n--;
+						break;
+					} else
+						n++;
+				}
+
+				wynik.liczba.add(0, (byte) n);
+				subsum = UFatInt.subtract(subsum, UFatInt.mulKaratsuba(y, n));
+			}
+
+			subsum.shiftL(8);
+			if (d)
+				wynik.shiftL(8);
+		}
+
+		return wynik.removeLeadingZeros();
 	}
 
 	public static UFatInt divide(UFatInt l1, long l2) {
-		return new UFatInt();
+		return UFatInt.divide(l1, new UFatInt(l2));
 	}
 
 	public static UFatInt mod(UFatInt l1, long l2) {
@@ -444,10 +495,10 @@ public class UFatInt implements Comparable<UFatInt> {
 		for (int i = 0; i < full; i++)
 			this.liczba.add(0, (byte) 0);
 
-		return this;
+		return this.removeLeadingZeros();
 	}
 
-	public UFatInt shiftL() {
+	private UFatInt shiftL() {
 		byte overFlow = 0;
 
 		for (int i = 0; i < this.liczba.size(); i++) {
@@ -464,7 +515,7 @@ public class UFatInt implements Comparable<UFatInt> {
 		return this;
 	}
 
-	public UFatInt shiftR() {
+	private UFatInt shiftR() {
 		byte borrow = 0;
 
 		for (int i = this.liczba.size() - 1; i >= 0; i--) {
@@ -495,9 +546,15 @@ public class UFatInt implements Comparable<UFatInt> {
 		return this;
 	}
 
-	public UFatInt setZero() {
+	private UFatInt setZero() {
 		this.liczba = new ArrayList<>();
 		this.liczba.add((byte) 0);
+		return this;
+	}
+
+	private UFatInt tenPow() {
+		UFatInt w = new UFatInt(this).shiftL(3);
+		this.liczba = UFatInt.add(w, new UFatInt(this).shiftL(1)).liczba;
 		return this;
 	}
 
@@ -509,7 +566,7 @@ public class UFatInt implements Comparable<UFatInt> {
 		return (this.liczba.size() == 1 && this.get(0) == 0);
 	}
 
-	public UFatInt removeLeadingZeros() {
+	private UFatInt removeLeadingZeros() {
 		for (int i = this.liczba.size() - 1; i >= 0; i--) {
 			if (this.liczba.get(i) != 0)
 				break;
@@ -533,7 +590,7 @@ public class UFatInt implements Comparable<UFatInt> {
 		return this.liczba.get(i);
 	}
 
-	public UFatInt[] split(int n) {
+	private UFatInt[] split(int n) {
 		if (n > this.getBitSize())
 			return new UFatInt[]{new UFatInt(), new UFatInt(this)};
 
@@ -544,7 +601,7 @@ public class UFatInt implements Comparable<UFatInt> {
 		};
 	}
 
-	public int getBitSize() {
+	private int getBitSize() {
 		if (this.liczba.size() == 0)
 			return 0;
 
