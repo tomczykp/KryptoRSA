@@ -5,43 +5,43 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class Num implements Comparable<Num> {
+public class NumList implements Comparable<NumList> {
 
 	private List<Integer> liczba;
 
-	public Num() {
+	public NumList() {
 		this.setZero();
 	}
 
-	public Num(Num l) {
+	public NumList(NumList l) {
 		this.liczba = new ArrayList<>();
 		for (Integer i : l.liczba)
 			this.liczba.add(i.intValue());
 	}
 
-	public Num(long l) {
-		this.liczba = Num.add(new Num(), l).liczba;
+	public NumList(long l) {
+		this.liczba = NumList.add(new NumList(), l).liczba;
 	}
 
-	private Num(List<Integer> l) {
+	private NumList(List<Integer> l) {
 		this.liczba = l;
 	}
 
-	public Num(String s) {
+	public NumList(String s) {
 		this.liczba = new ArrayList<>();
 		for (int i = 0; i < s.length(); i++) {
 			this.liczba.add(0, s.charAt(i) - '0');
 		}
 	}
 
-	public Num(byte[] d) {
-		Num t = new Num();
-		Num shift = new Num(256);
+	public NumList(byte[] d) {
+		NumList t = new NumList();
+		NumList shift = new NumList(256);
 
 		for (int i = d.length - 1; i >= 0; i--) {
 			byte b = d[i];
-			t = Num.mulKaratsuba(t, shift);
-			t = Num.add(t, Byte.toUnsignedInt(b));
+			t = NumList.mulKaratsuba(t, shift);
+			t = NumList.add(t, Byte.toUnsignedInt(b));
 		}
 
 		this.liczba = t.liczba;
@@ -59,13 +59,13 @@ public class Num implements Comparable<Num> {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof Num that)) return false;
+		if (!(o instanceof NumList that)) return false;
 
 		return Objects.equals(that.toString(), this.toString());
 	}
 
 	@Override
-	public int compareTo(Num l2) {
+	public int compareTo(NumList l2) {
 		int d = this.liczba.size() - l2.liczba.size();
 		if (d > 0)
 			return 1;
@@ -99,7 +99,7 @@ public class Num implements Comparable<Num> {
 		return (this.liczba.size() == 1 && this.get(0) == 0);
 	}
 
-	private Num splitNum(int start, int stop) {
+	private NumList splitNum(int start, int stop) {
 
 		int s = this.liczba.size();
 		List<Integer> lista = new ArrayList<>();
@@ -113,7 +113,7 @@ public class Num implements Comparable<Num> {
 		if (zero)
 			lista.add(0);
 
-		return new Num(lista);
+		return new NumList(lista);
 	}
 
 	private void removeLeadingZeros() {
@@ -133,20 +133,20 @@ public class Num implements Comparable<Num> {
 
 	public String bin() {
 
-		Num copy = new Num(this);
+		NumList copy = new NumList(this);
 		String wynik = "";
 
 		while (!copy.isZero()) {
-			String k = Num.mod(copy, 2).toString();
+			String k = NumList.mod(copy, 2).toString();
 			wynik = k + wynik;
-			copy = Num.divide(copy, 2);
+			copy = NumList.divide(copy, 2);
 		}
 
 
 		return wynik;
 	}
 
-	public Num tenPow(int n) {
+	public NumList tenPow(int n) {
 		for (int i = 0; i < n; i++)
 			this.liczba.add(0, 0);
 
@@ -155,7 +155,7 @@ public class Num implements Comparable<Num> {
 	}
 
 	public long toLong() {
-		Num longNum = new Num(String.valueOf(Long.MAX_VALUE));
+		NumList longNum = new NumList(String.valueOf(Long.MAX_VALUE));
 		if (this.compareTo(longNum) > 0)
 			return 0;
 		return Long.parseLong(this.toString());
@@ -164,36 +164,36 @@ public class Num implements Comparable<Num> {
 	public byte[] getBytes() {
 
 		int n = 0;
-		Num copy = new Num(this);
-		Num b = new Num("256");
+		NumList copy = new NumList(this);
+		NumList b = new NumList("256");
 
 		while (!copy.isZero()) {
-			copy = Num.divide(copy, b);
+			copy = NumList.divide(copy, b);
 			n++;
 		}
 
-		copy = new Num(this);
+		copy = new NumList(this);
 		byte[] buffer = new byte[n];
 
 		for (int i = 0; !copy.isZero(); i++) {
-			buffer[i] = (byte) (Num.mod(copy, b).toLong());
-			copy = Num.divide(copy, b);
+			buffer[i] = (byte) (NumList.mod(copy, b).toLong());
+			copy = NumList.divide(copy, b);
 		}
 
 		return buffer;
 	}
 
-	public static Num add(Num x, Num y) {
+	public static NumList add(NumList x, NumList y) {
 		if (y == null && x == null)
-			return new Num();
+			return new NumList();
 		else if (x == null)
-			return new Num(y);
+			return new NumList(y);
 		else if (y == null)
-			return new Num(x);
+			return new NumList(x);
 
 		int d;
 		boolean overload = false;
-		Num tmp = new Num();
+		NumList tmp = new NumList();
 		int sx = x.liczba.size();
 		int sy = y.liczba.size();
 
@@ -219,18 +219,18 @@ public class Num implements Comparable<Num> {
 		return tmp;
 	}
 
-	public static Num add(Num x, long y) {
+	public static NumList add(NumList x, long y) {
 		if (y < 0 && x == null)
-			return new Num();
+			return new NumList();
 		else if (y < 0)
-			return new Num(x);
+			return new NumList(x);
 		if (x == null)
-			return new Num(y);
+			return new NumList(y);
 
 		int i = 0;
 		int d;
 		boolean overload = false;
-		Num tmp = new Num();
+		NumList tmp = new NumList();
 
 		int sx = x.liczba.size();
 
@@ -258,24 +258,24 @@ public class Num implements Comparable<Num> {
 		return tmp;
 	}
 
-	public static Num subtract(Num x, Num y) {
+	public static NumList subtract(NumList x, NumList y) {
 		if (y == null && x == null)
-			return new Num();
+			return new NumList();
 		else if (x == null)
-			return new Num(y);
+			return new NumList(y);
 		else if (y == null)
-			return new Num(x);
+			return new NumList(x);
 
 		int sx = x.liczba.size();
 		int sy = y.liczba.size();
 
 		if (sx < sy) {
-			return new Num();
+			return new NumList();
 		}
 
 		int d;
 		boolean borrow = false;
-		Num tmp = new Num();
+		NumList tmp = new NumList();
 
 		for (int i = 0; i < sx || borrow; i++) {
 
@@ -284,7 +284,7 @@ public class Num implements Comparable<Num> {
 
 			d = 0;
 			if (sx <= i && borrow) // już nic nie ma w X, a trzeba pobrać
-				return new Num();
+				return new NumList();
 
 			if (borrow)
 				d--;
@@ -308,37 +308,37 @@ public class Num implements Comparable<Num> {
 		return tmp;
 	}
 
-	public static Num subtract(Num x, long y) {
-		return Num.subtract(x, new Num(y));
+	public static NumList subtract(NumList x, long y) {
+		return NumList.subtract(x, new NumList(y));
 	}
 
-	public static Num mul(Num x, Num y) {
+	public static NumList mul(NumList x, NumList y) {
 
 		if ((y.liczba.size() == 1 && y.get(0) == 0)
 				|| (x.liczba.size() == 1 && x.get(0) == 0)) {
-			return new Num();
+			return new NumList();
 		}
 
-		Num suma = new Num();
+		NumList suma = new NumList();
 		int d;
 		for (int i = 0; i < y.liczba.size(); i++) {
 
 			d = y.get(i);
 			if (d != 0)
-				suma = Num.add(suma, Num.mul(x, d).tenPow(i));
+				suma = NumList.add(suma, NumList.mul(x, d).tenPow(i));
 
 		}
 
 		return suma;
 	}
 
-	public static Num mul(Num x, long y) {
+	public static NumList mul(NumList x, long y) {
 		if (y < 0 || (x.liczba.size() == 1 && x.get(0) == 0))
-			return new Num();
+			return new NumList();
 
 		int d;
 		int j = 0;
-		Num suma = new Num();
+		NumList suma = new NumList();
 
 		while (y != 0) {
 
@@ -346,9 +346,9 @@ public class Num implements Comparable<Num> {
 			y /= 10;
 
 			for (int i = 0; i < x.liczba.size(); i++) {
-				Num tmp = Num.add(new Num(), (long) d * x.get(i));
+				NumList tmp = NumList.add(new NumList(), (long) d * x.get(i));
 				tmp.tenPow(j + i);
-				suma = Num.add(suma, tmp);
+				suma = NumList.add(suma, tmp);
 			}
 			j++;
 		}
@@ -356,7 +356,7 @@ public class Num implements Comparable<Num> {
 		return suma;
 	}
 
-	public static Num mulKaratsuba(Num x, Num y) {
+	public static NumList mulKaratsuba(NumList x, NumList y) {
 
 		int sx = x.liczba.size();
 		int sy = y.liczba.size();
@@ -364,77 +364,77 @@ public class Num implements Comparable<Num> {
 
 		/** for small values directly multiply **/
 		if (N < 5)
-			return Num.mul(x, y);
+			return NumList.mul(x, y);
 
 		/** max length divided, rounded up **/
 		N = (N / 2);
 
 
 		/** compute sub expressions **/
-		Num ax = x.splitNum(N, sx);
-		Num bx = x.splitNum(0, N);
+		NumList ax = x.splitNum(N, sx);
+		NumList bx = x.splitNum(0, N);
 
-		Num ay = y.splitNum(N, sy);
-		Num by = y.splitNum(0, N);
+		NumList ay = y.splitNum(N, sy);
+		NumList by = y.splitNum(0, N);
 
 		/** compute sub expressions **/
-		Num z0 = Num.mulKaratsuba(bx, by);  // z0
-		Num z1 = Num.mulKaratsuba(           // z1
-				Num.add(ax, bx),
-				Num.add(ay, by));
-		Num z2 = Num.mulKaratsuba(ax, ay);  // z2
+		NumList z0 = NumList.mulKaratsuba(bx, by);  // z0
+		NumList z1 = NumList.mulKaratsuba(           // z1
+				NumList.add(ax, bx),
+				NumList.add(ay, by));
+		NumList z2 = NumList.mulKaratsuba(ax, ay);  // z2
 
-		z1 = Num.subtract(z1, z2);
-		z1 = Num.subtract(z1, z0);
+		z1 = NumList.subtract(z1, z2);
+		z1 = NumList.subtract(z1, z0);
 
 		z2.tenPow(2 * N);
 		z1.tenPow(N);
 
-		return Num.add(z2, Num.add(z0, z1));
+		return NumList.add(z2, NumList.add(z0, z1));
 	}
 
-	public static Num mulKaratsuba(Num x, long y) {
-		return Num.mulKaratsuba(x, new Num(y));
+	public static NumList mulKaratsuba(NumList x, long y) {
+		return NumList.mulKaratsuba(x, new NumList(y));
 	}
 
-	public static Num fastPow(Num a, long n) {
+	public static NumList fastPow(NumList a, long n) {
 		if (n == 0)
-			return new Num(1);
+			return new NumList(1);
 
-		Num tmp = Num.fastPow(a, n / 2);
+		NumList tmp = NumList.fastPow(a, n / 2);
 		if (n % 2 == 0)
-			return Num.mulKaratsuba(tmp, tmp);
+			return NumList.mulKaratsuba(tmp, tmp);
 		else
-			return Num.mulKaratsuba(a, Num.mulKaratsuba(tmp, tmp));
+			return NumList.mulKaratsuba(a, NumList.mulKaratsuba(tmp, tmp));
 	}
 
-	public static Num divide(Num x, Num y) {
+	public static NumList divide(NumList x, NumList y) {
 		if (y.isZero())
 			throw new ArithmeticException();
 
 		if (x.isZero())
-			return new Num();
+			return new NumList();
 
 		int sx = x.liczba.size();
 		int sy = y.liczba.size();
 		if (sy > sx) // dzielenie przez większą liczbę
-			return new Num();
+			return new NumList();
 
-		Num wynik = new Num();
-		Num tmp = new Num();
+		NumList wynik = new NumList();
+		NumList tmp = new NumList();
 		int n;
 		boolean d;
 
 		for (int i = sx - 1; i >= 0; i--) {
 
 			d = true;
-			tmp = Num.add(tmp, x.get(i));
+			tmp = NumList.add(tmp, x.get(i));
 
 			if (tmp.compareTo(y) >= 0) {
 				d = false;
 				n = 1;
 				while (true) {
-					Num s = Num.mulKaratsuba(y, n);
+					NumList s = NumList.mulKaratsuba(y, n);
 					int t = s.compareTo(tmp);
 
 					if (t == 0)
@@ -447,7 +447,7 @@ public class Num implements Comparable<Num> {
 				}
 
 				wynik.liczba.add(0, n);
-				tmp = Num.subtract(tmp, Num.mulKaratsuba(y, n));
+				tmp = NumList.subtract(tmp, NumList.mulKaratsuba(y, n));
 			}
 
 			tmp.tenPow(1);
@@ -459,28 +459,28 @@ public class Num implements Comparable<Num> {
 		return wynik;
 	}
 
-	public static Num divide(Num x, long y) {
-		return Num.divide(x, new Num(y));
+	public static NumList divide(NumList x, long y) {
+		return NumList.divide(x, new NumList(y));
 	}
 
-	public static Num mod(Num x, Num y) {
+	public static NumList mod(NumList x, NumList y) {
 
-		Num d = Num.divide(x, y);
-		d = Num.mulKaratsuba(y, d);
-		d = Num.subtract(x, d);
+		NumList d = NumList.divide(x, y);
+		d = NumList.mulKaratsuba(y, d);
+		d = NumList.subtract(x, d);
 		return d;
 	}
 
-	public static Num mod(Num x, long y) {
-		return Num.mod(x, new Num(y));
+	public static NumList mod(NumList x, long y) {
+		return NumList.mod(x, new NumList(y));
 	}
 
-	public static Num randOdd(int bytes) {
-		Num t = Num.fastPow(new Num(2), bytes);
-		return Num.generateOdd(t.liczba.size());
+	public static NumList randOdd(int bytes) {
+		NumList t = NumList.fastPow(new NumList(2), bytes);
+		return NumList.generateOdd(t.liczba.size());
 	}
 
-	public static Num generateOdd(int size) {
+	public static NumList generateOdd(int size) {
 		Random r = new Random();
 		List<Integer> s = new ArrayList<>();
 
@@ -493,12 +493,12 @@ public class Num implements Comparable<Num> {
 		int[] t = {1, 3, 7, 9};
 		s.add(0, t[r.nextInt(4)]);
 
-		return new Num(s);
+		return new NumList(s);
 	}
 
-	public static Num generateFromRange(Num a0, Num a1) {
+	public static NumList generateFromRange(NumList a0, NumList a1) {
 
-		Num wynik;
+		NumList wynik;
 		Random r = new Random();
 
 		int s1 = a0.liczba.size();
@@ -507,28 +507,28 @@ public class Num implements Comparable<Num> {
 			s2++;
 
 		do {
-			wynik = Num.generateOdd(r.nextInt(s1, s2));
-			wynik = Num.mod(wynik, a1);
+			wynik = NumList.generateOdd(r.nextInt(s1, s2));
+			wynik = NumList.mod(wynik, a1);
 		} while (wynik.compareTo(a0) < 0);
 
 		return wynik;
 	}
 
-	public static Num modPow(Num a, Num b, Num n) {
-		Num res = new Num(1);
+	public static NumList modPow(NumList a, NumList b, NumList n) {
+		NumList res = new NumList(1);
 
-		Num x = Num.mod(a, n);
-		Num y = new Num(b);
+		NumList x = NumList.mod(a, n);
+		NumList y = new NumList(b);
 
 		if (x.isZero())
 			return x;
 
 		while (!y.isZero()) {
 			if (y.isOdd())
-				res = Num.mod(Num.mulKaratsuba(res, x), n);
+				res = NumList.mod(NumList.mulKaratsuba(res, x), n);
 
-			y = Num.divide(y, 2);
-			x = Num.mod(Num.mulKaratsuba(x, x), n);
+			y = NumList.divide(y, 2);
+			x = NumList.mod(NumList.mulKaratsuba(x, x), n);
 		}
 
 		return res;
@@ -536,13 +536,13 @@ public class Num implements Comparable<Num> {
 
 	public boolean testRabinMiller() {
 
-		if (this.compareTo(new Num(3)) < 0)
+		if (this.compareTo(new NumList(3)) < 0)
 			return true;
 
-		Num one = new Num(1);
-		Num two = new Num(2);
+		NumList one = new NumList(1);
+		NumList two = new NumList(2);
 
-		Num p_1 = Num.subtract(this, 1);
+		NumList p_1 = NumList.subtract(this, 1);
 		String bin = p_1.bin();
 		int size = bin.length();
 
@@ -551,15 +551,15 @@ public class Num implements Comparable<Num> {
 			k++;
 
 
-		Num a = Num.generateFromRange(two, p_1);
-		Num m = Num.divide(p_1, Num.fastPow(two, k));
-		Num x = Num.modPow(a, m, this);
+		NumList a = NumList.generateFromRange(two, p_1);
+		NumList m = NumList.divide(p_1, NumList.fastPow(two, k));
+		NumList x = NumList.modPow(a, m, this);
 
 		if (x.equals(p_1) || x.equals(one))
 			return true;
 
 		for (int i = 0; i < k - 1; i++) {
-			x = Num.modPow(x, two, this);
+			x = NumList.modPow(x, two, this);
 
 			if (x.equals(one))
 				return false;
@@ -578,82 +578,82 @@ public class Num implements Comparable<Num> {
 		return true;
 	}
 
-	public static Num gcd(Num a, Num b) {
+	public static NumList gcd(NumList a, NumList b) {
 
-		Num cA = new Num(a);
-		Num cB = new Num(b);
+		NumList cA = new NumList(a);
+		NumList cB = new NumList(b);
 
 		while (!cB.isZero()) {
-			Num tmp = cB;
-			cB = Num.mod(cA, cB);
+			NumList tmp = cB;
+			cB = NumList.mod(cA, cB);
 			cA = tmp;
 		}
 
 		return cA;
 	}
 
-	public static Num modInverse(Num a0, Num m0) {
+	public static NumList modInverse(NumList a0, NumList m0) {
 
-		Num one = new Num(1);
-		Num x = new Num(1), y = new Num();
-		Num m = new Num(m0);
-		Num a = new Num(a0);
+		NumList one = new NumList(1);
+		NumList x = new NumList(1), y = new NumList();
+		NumList m = new NumList(m0);
+		NumList a = new NumList(a0);
 		boolean xNeg = false, yNeg = false, tNeg;
 
 		if (m.equals(one))
-			return new Num();
+			return new NumList();
 
 		while (a.compareTo(one) > 0) {
 
-			Num q = Num.divide(a, m);
-			Num t = new Num(m);
+			NumList q = NumList.divide(a, m);
+			NumList t = new NumList(m);
 
-			m = Num.mod(a, m);
-			a = new Num(t);
+			m = NumList.mod(a, m);
+			a = new NumList(t);
 
 			tNeg = yNeg;
-			t = new Num(y);
+			t = new NumList(y);
 
-			Num tmp = Num.mulKaratsuba(q, y);
+			NumList tmp = NumList.mulKaratsuba(q, y);
 
 			if (yNeg) {
 				if (xNeg) {
 					//	y = q*y - x
 					if (tmp.compareTo(x) > 0) {
-						y = Num.subtract(tmp, x);
+						y = NumList.subtract(tmp, x);
 						yNeg = false;
 					} else {
-						y = Num.subtract(x, tmp);
+						y = NumList.subtract(x, tmp);
 						yNeg = true;
 					}
 				} else {
 					// y = q*y + x
-					y = Num.add(tmp, x);
+					y = NumList.add(tmp, x);
 					yNeg = false;
 				}
 			} else {
 				if (xNeg) {
 					// y = - q*y - x
-					y = Num.add(tmp, x);
+					y = NumList.add(tmp, x);
 					yNeg = true;
 				} else {
 					// y = -q*y + x
 					if (tmp.compareTo(x) > 0) {
-						y = Num.subtract(tmp, x);
+						y = NumList.subtract(tmp, x);
 						yNeg = true;
 					} else {
-						y = Num.subtract(x, tmp);
+						y = NumList.subtract(x, tmp);
 						yNeg = false;
 					}
 				}
 			}
 
 			xNeg = tNeg;
-			x = new Num(t);
+			x = new NumList(t);
 		}
 
 		if (xNeg)
-			x = Num.subtract(m0, x);
+			x = NumList.subtract(m0, x);
 
 		return x;
 	}

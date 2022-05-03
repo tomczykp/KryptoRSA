@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-public class NumTests {
+public class NumListTests {
 
-	int n = 2000000;
+	int n = 20000;
 	int nP = 10000;
 
 	public static boolean isPrime(int n) {
@@ -102,18 +102,18 @@ public class NumTests {
 
 	@Test
 	public void addTest() {
-		Num l1;
-		Num l2;
+		NumList l1;
+		NumList l2;
 
 		long i1, i2;
 		Random rand = new Random();
 		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			Num tmp = Num.add(l1, l2);
+			NumList tmp = NumList.add(l1, l2);
 			Assertions.assertEquals(String.valueOf(i1 + i2), tmp.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 			Assertions.assertEquals(String.valueOf(i2), l2.toString());
@@ -123,9 +123,9 @@ public class NumTests {
 		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 
-			Num tmp = Num.add(l1, i2);
+			NumList tmp = NumList.add(l1, i2);
 
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
 			Assertions.assertEquals(String.valueOf(i1 + i2), tmp.toString());
@@ -135,18 +135,18 @@ public class NumTests {
 
 	@Test
 	public void subTest() {
-		Num l1;
-		Num l2;
+		NumList l1;
+		NumList l2;
 
 		long i1, i2;
 		Random rand = new Random();
 		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			Num s = Num.subtract(l1, l2);
+			NumList s = NumList.subtract(l1, l2);
 
 			long tmp = i1 - i2;
 			if (tmp < 0)
@@ -160,9 +160,9 @@ public class NumTests {
 		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 
-			Num s = Num.subtract(l1, i2);
+			NumList s = NumList.subtract(l1, i2);
 			long tmp = i1 - i2;
 			if (tmp < 0)
 				tmp = 0;
@@ -174,7 +174,7 @@ public class NumTests {
 
 	@Test
 	public void mulTest() {
-		Num l1, l2, s;
+		NumList l1, l2, s;
 
 		long i1, i2, tmp;
 		Random rand = new Random();
@@ -182,9 +182,9 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 
-			s = Num.mul(l1, i2);
+			s = NumList.mul(l1, i2);
 			tmp = i1 * i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -193,10 +193,10 @@ public class NumTests {
 		}
 
 		tmp = 100000;
-		l1 = new Num(1);
+		l1 = new NumList(1);
 
 		for (int i = 0; i < 40; i++)
-			l1 = Num.mul(l1, tmp);
+			l1 = NumList.mul(l1, tmp);
 
 		String str = "1" + "0".repeat(200);
 		Assertions.assertEquals(str, l1.toString());
@@ -205,10 +205,10 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			s = Num.mul(l1, l2);
+			s = NumList.mul(l1, l2);
 			tmp = i1 * i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -218,17 +218,17 @@ public class NumTests {
 		}
 
 		tmp = 100000;
-		l2 = new Num(tmp);
-		l1 = new Num(1);
+		l2 = new NumList(tmp);
+		l1 = new NumList(1);
 
 		for (int i = 0; i < 40; i++)
-			l1 = Num.mul(l1, l2);
+			l1 = NumList.mul(l1, l2);
 
 		str = "1" + "0".repeat(200);
 		Assertions.assertEquals(str, l1.toString());
 
 		tmp = 999999999;
-		l1 = Num.mul(new Num(tmp), tmp);
+		l1 = NumList.mul(new NumList(tmp), tmp);
 
 		str = "999999998000000001";
 		Assertions.assertEquals(str, l1.toString());
@@ -236,8 +236,8 @@ public class NumTests {
 
 	@Test
 	public void karatsubaTest() {
-		Num l1;
-		Num l2;
+		NumList l1;
+		NumList l2;
 
 		long i1, i2;
 		Random rand = new Random();
@@ -245,10 +245,10 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			Num s = Num.mulKaratsuba(l1, l2);
+			NumList s = NumList.mulKaratsuba(l1, l2);
 			long tmp = i1 * i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -260,16 +260,16 @@ public class NumTests {
 		String s;
 		s = "1" + "9".repeat(100);
 		System.out.println(s);
-		l2 = new Num(s);
-		l1 = new Num(s);
-		l1 = Num.mulKaratsuba(l1, l2);
+		l2 = new NumList(s);
+		l1 = new NumList(s);
+		l1 = NumList.mulKaratsuba(l1, l2);
 
 		s =
 				"399999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999960000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001";
 		Assertions.assertEquals(s, l1.toString());
 
 		long tmp = 999999999;
-		l1 = Num.mulKaratsuba(new Num(tmp), tmp);
+		l1 = NumList.mulKaratsuba(new NumList(tmp), tmp);
 
 		s = "999999998000000001";
 		Assertions.assertEquals(s, l1.toString());
@@ -278,7 +278,7 @@ public class NumTests {
 
 	@Test
 	public void divTest() {
-		Num l1, l2, s;
+		NumList l1, l2, s;
 
 		long i1, i2, tmp;
 		Random rand = new Random();
@@ -287,10 +287,10 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			s = Num.divide(l1, l2);
+			s = NumList.divide(l1, l2);
 			tmp = i1 / i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -303,9 +303,9 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 
-			s = Num.divide(l1, i2);
+			s = NumList.divide(l1, i2);
 			tmp = i1 / i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -316,8 +316,8 @@ public class NumTests {
 
 	@Test
 	public void modTest() {
-		Num l1;
-		Num l2;
+		NumList l1;
+		NumList l2;
 
 		long i1, i2;
 		Random rand = new Random();
@@ -326,10 +326,10 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			Num s = Num.mod(l1, l2);
+			NumList s = NumList.mod(l1, l2);
 			long tmp = i1 % i2;
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -341,9 +341,9 @@ public class NumTests {
 
 	@Test
 	public void modPowTest() {
-		Num l1;
-		Num l2;
-		Num two = new Num(2);
+		NumList l1;
+		NumList l2;
+		NumList two = new NumList(2);
 
 		int i1, i2;
 		Random rand = new Random();
@@ -352,11 +352,11 @@ public class NumTests {
 			i1 = rand.nextInt(1, Short.MAX_VALUE);
 			i2 = rand.nextInt(1, Short.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
 			System.out.println("Test " + i + " modPow()\n 2 ^ " + l1 + " mod " + l2);
-			Num s = Num.modPow(two, l1, l2);
+			NumList s = NumList.modPow(two, l1, l2);
 			long tmp = modPow(2, i1, i2);
 
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -367,7 +367,7 @@ public class NumTests {
 
 	@Test
 	public void binTest() {
-		Num l1;
+		NumList l1;
 		int i1;
 		Random rand = new Random();
 
@@ -375,7 +375,7 @@ public class NumTests {
 			System.out.println("Test " + i + " binTest()");
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 
 			Assertions.assertEquals(Integer.toBinaryString(i1), l1.bin());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -385,15 +385,15 @@ public class NumTests {
 	@Test
 	public void genRangeTest() {
 
-		Num p, k;
+		NumList p, k;
 
 		for (int i = 0; i < 100; i++) {
 			System.out.println("Test " + i + " genRangeTest()");
-			p = Num.generateOdd(18);
-			k = Num.generateOdd(20);
+			p = NumList.generateOdd(18);
+			k = NumList.generateOdd(20);
 
 			for (int j = 0; j < this.n; j++) {
-				Num tmp = Num.generateFromRange(p, k);
+				NumList tmp = NumList.generateFromRange(p, k);
 				Assertions.assertTrue(tmp.compareTo(p) > 0);
 				Assertions.assertTrue(tmp.compareTo(k) < 0);
 			}
@@ -403,14 +403,14 @@ public class NumTests {
 
 	@Test
 	public void primeTest() {
-		Num l1;
+		NumList l1;
 		int i1;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.nP; i++) {
 			i1 = rand.nextInt(3, Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 			System.out.println("Test " + i + " prime(): " + i1);
 			Assertions.assertEquals(isPrime(i1), l1.isPrime());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -421,8 +421,8 @@ public class NumTests {
 	@Test
 	public void gcdTest() {
 
-		Num l1;
-		Num l2;
+		NumList l1;
+		NumList l2;
 
 		long i1, i2;
 		Random rand = new Random();
@@ -431,10 +431,10 @@ public class NumTests {
 			i1 = rand.nextInt(Integer.MAX_VALUE);
 			i2 = rand.nextInt(Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 
-			Num s = Num.gcd(l1, l2);
+			NumList s = NumList.gcd(l1, l2);
 			long tmp = GCD(i1, i2);
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
@@ -447,8 +447,8 @@ public class NumTests {
 	@Test
 	public void modInverseTest() {
 
-		Num l1;
-		Num l2;
+		NumList l1;
+		NumList l2;
 
 		int i1, i2;
 		Random rand = new Random();
@@ -457,13 +457,13 @@ public class NumTests {
 			i1 = rand.nextInt(1, Integer.MAX_VALUE);
 			i2 = rand.nextInt(1, Integer.MAX_VALUE);
 
-			l1 = new Num(i1);
-			l2 = new Num(i2);
+			l1 = new NumList(i1);
+			l2 = new NumList(i2);
 			if (GCD(i1, i2) != 1)
 				continue;
 
 			long tmp = modInverse(i1, i2);
-			Num s = Num.modInverse(l1, l2);
+			NumList s = NumList.modInverse(l1, l2);
 
 			Assertions.assertEquals(String.valueOf(tmp), s.toString());
 			Assertions.assertEquals(String.valueOf(i1), l1.toString());
@@ -475,13 +475,13 @@ public class NumTests {
 	@Test
 	public void toLongTest() {
 
-		Num l1;
+		NumList l1;
 		long i1;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
 			i1 = rand.nextLong(Long.MAX_VALUE);
-			l1 = new Num(i1);
+			l1 = new NumList(i1);
 
 			Assertions.assertEquals(i1, l1.toLong());
 			System.out.println("Test " + i + " toLong()");
@@ -491,13 +491,13 @@ public class NumTests {
 	@Test
 	public void algoTest() {
 
-		Num msg = new Num("8675472634406074469");
-		Num n = new Num("6876277378425123763");
-		Num d = new Num("3175897683356795561");
-		Num e = new Num("854204321");
+		NumList msg = new NumList("8675472634406074469");
+		NumList n = new NumList("6876277378425123763");
+		NumList d = new NumList("3175897683356795561");
+		NumList e = new NumList("854204321");
 
-		Num x = Num.modPow(msg, e, n);
-		Num m = Num.modPow(x, d, n);
+		NumList x = NumList.modPow(msg, e, n);
+		NumList m = NumList.modPow(x, d, n);
 
 		System.out.println("X = " + x + ", msg = " + m);
 

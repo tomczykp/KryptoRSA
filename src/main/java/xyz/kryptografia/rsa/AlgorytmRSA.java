@@ -1,6 +1,6 @@
 package xyz.kryptografia.rsa;
 
-import xyz.kryptografia.rsa.liczby.Num;
+import xyz.kryptografia.rsa.liczby.UFatInt;
 
 public class AlgorytmRSA implements Szyfr {
 
@@ -9,66 +9,66 @@ public class AlgorytmRSA implements Szyfr {
 	}
 
 	@Override
-	public Num[] encrypt(Num[] plainText, Num[] pubKey) {
+	public UFatInt[] encrypt(UFatInt[] plainText, UFatInt[] pubKey) {
 		return this.crypt(plainText, pubKey);
 	}
 
 	@Override
-	public Num[] decrypt(Num[] cipherText, Num[] privKey) {
+	public UFatInt[] decrypt(UFatInt[] cipherText, UFatInt[] privKey) {
 		return this.crypt(cipherText, privKey);
 	}
 
 	@Override
-	public Num[] crypt(Num[] text, Num[] keys) {
+	public UFatInt[] crypt(UFatInt[] text, UFatInt[] keys) {
 		int l = text.length;
-		Num[] wynik = new Num[l];
+		UFatInt[] wynik = new UFatInt[l];
 
 		for (int i = 0; i < l; i++)
-			wynik[i] = Num.modPow(text[i], keys[0], keys[1]);
+			wynik[i] = UFatInt.modPow(text[i], keys[0], keys[1]);
 
 		return wynik;
 	}
 
 	@Override
-	public Num[][] genKey(int len) {
+	public UFatInt[][] genKey(int len) {
 
-		Num one = new Num(1);
-		Num p, q;
+		UFatInt one = new UFatInt(1);
+		UFatInt p, q;
 
 		do {
-			p = Num.randOdd(len / 2);
+			p = UFatInt.randOdd(len / 2);
 			System.out.println("Trying p");
 		} while (!p.isPrime());
 
 		do {
-			q = Num.randOdd(len / 2);
+			q = UFatInt.randOdd(len / 2);
 			System.out.println("Trying q");
 		} while (!q.isPrime());
 
 		while (q.equals(p)) {
 			do {
-				p = Num.randOdd(len / 2);
+				p = UFatInt.randOdd(len / 2);
 			} while (!p.isPrime());
 		}
 
-		Num n = Num.mulKaratsuba(p, q);
-		Num fi = Num.mulKaratsuba(
-				Num.subtract(p, 1),
-				Num.subtract(q, 1)
+		UFatInt n = UFatInt.mulKaratsuba(p, q);
+		UFatInt fi = UFatInt.mulKaratsuba(
+				UFatInt.subOneOdd(p),
+				UFatInt.subOneOdd(q)
 		);
 
 
-		Num e;
+		UFatInt e;
 		do {
-			e = Num.generateFromRange(one, fi);
-		} while (!Num.gcd(e, fi).equals(one));
+			e = UFatInt.generateUpTo(fi);
+		} while (!UFatInt.gcd(e, fi).equals(one));
 
-		Num d = Num.modInverse(e, fi);
+		UFatInt d = UFatInt.modInverse(e, fi);
 
 		System.out.println("\tn = " + n + "\n\td = " + d + "\n\te = " + e);
 
 
-		return new Num[][]{{e, n}, {d, n}};
+		return new UFatInt[][]{{e, n}, {d, n}};
 	}
 
 

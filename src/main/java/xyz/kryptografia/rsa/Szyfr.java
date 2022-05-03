@@ -1,15 +1,15 @@
 package xyz.kryptografia.rsa;
 
-import xyz.kryptografia.rsa.liczby.Num;
+import xyz.kryptografia.rsa.liczby.UFatInt;
 
 public interface Szyfr {
 
-	Num[] encrypt(Num[] plainText, Num[] key);
+	UFatInt[] encrypt(UFatInt[] plainText, UFatInt[] key);
 
-	Num[] decrypt(Num[] cipherText, Num[] key);
+	UFatInt[] decrypt(UFatInt[] cipherText, UFatInt[] key);
 
-	Num[] crypt(Num[] text, Num[] key);
+	UFatInt[] crypt(UFatInt[] text, UFatInt[] key);
 
 
-	Num[][] genKey(int len);
+	UFatInt[][] genKey(int len);
 }

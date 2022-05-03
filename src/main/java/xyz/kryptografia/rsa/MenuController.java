@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import xyz.kryptografia.rsa.liczby.Num;
+import xyz.kryptografia.rsa.liczby.UFatInt;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -117,18 +117,18 @@ public class MenuController {
 		if (Objects.equals(this.cipherText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
 
-		Num[] privKeyData = Converter.decode(this.privKey.getText());
-		Num[] cipherTextData = Converter.bytesToNums(
+		UFatInt[] privKeyData = Converter.decode(this.privKey.getText());
+		UFatInt[] cipherTextData = Converter.splitToNums(
 				Base64.getDecoder().decode(this.cipherText.getText()),
 				this.numBits.getValue() / 8
 		);
 
-		Num[] nums = this.szyfr.decrypt(cipherTextData, privKeyData);
+		UFatInt[] nums = this.szyfr.decrypt(cipherTextData, privKeyData);
 
 		System.out.println("Odczytane: " + Arrays.toString(cipherTextData));
 		System.out.println("Priv: " + Arrays.toString(privKeyData) + ", obliczone: " + Arrays.toString(nums));
 
-		byte[] data = Converter.numsToBytes(nums);
+		byte[] data = Converter.compactNums(nums);
 		String tmp = new String(data);
 
 		if (tmp.matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
@@ -145,18 +145,18 @@ public class MenuController {
 		if (Objects.equals(this.plainText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
 
-		Num[] pubKeyData = Converter.decode(this.pubKey.getText());
-		Num[] plainTextData = Converter.bytesToNums(
+		UFatInt[] pubKeyData = Converter.decode(this.pubKey.getText());
+		UFatInt[] plainTextData = Converter.splitToNums(
 				this.plainText.getText().getBytes(),
 				this.numBits.getValue() / 8
 		);
 
-		Num[] nums = this.szyfr.encrypt(plainTextData, pubKeyData);
+		UFatInt[] nums = this.szyfr.encrypt(plainTextData, pubKeyData);
 
 		System.out.println("Odczytane: " + Arrays.toString(plainTextData));
 		System.out.println("Pub: " + Arrays.toString(pubKeyData) + ", obliczone: " + Arrays.toString(nums));
 
-		this.cipherText.setText(Base64.getEncoder().encodeToString(Converter.numsToBytes(nums)));
+		this.cipherText.setText(Base64.getEncoder().encodeToString(Converter.compactNums(nums)));
 	}
 
 	public void showStage() {
@@ -169,7 +169,7 @@ public class MenuController {
 		System.out.println("Ilość bitów: " + len);
 
 		long start = System.currentTimeMillis();
-		Num[][] tmp = this.szyfr.genKey(len);
+		UFatInt[][] tmp = this.szyfr.genKey(len);
 		System.out.println("Generowanie trwało: " + (System.currentTimeMillis() - start));
 
 		this.privKey.setText(Converter.encode(tmp[0]));

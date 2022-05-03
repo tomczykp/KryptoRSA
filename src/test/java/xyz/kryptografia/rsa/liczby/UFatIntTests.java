@@ -7,8 +7,22 @@ import java.util.Random;
 
 public class UFatIntTests {
 
-	int n = 500000;
+	int n = 2000;
 	int len = 100;
+
+	public static boolean isPrime(int n) {
+		// Corner case
+		if (n <= 1)
+			return false;
+
+		// Check from 2 to n-1
+		for (int i = 2; i < n; i++)
+			if (n % i == 0)
+				return false;
+
+		return true;
+	}
+
 
 	public String toHex(byte[] bytes) {
 		String sb = "";
@@ -21,13 +35,13 @@ public class UFatIntTests {
 
 	@Test
 	public void constructoTest() {
-		Num n1, n2;
+		NumList n1, n2;
 		UFatInt f1, f2;
 		Random r = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			n1 = Num.generateOdd(r.nextInt(this.len));
-			n2 = Num.generateOdd(r.nextInt(this.len));
+			n1 = NumList.generateOdd(r.nextInt(this.len));
+			n2 = NumList.generateOdd(r.nextInt(this.len));
 
 			f1 = new UFatInt(n1);
 			f2 = new UFatInt(n2);
@@ -45,14 +59,14 @@ public class UFatIntTests {
 	@Test
 	public void comparatorTest() {
 
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		long lo1, lo2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
@@ -85,21 +99,21 @@ public class UFatIntTests {
 
 	@Test
 	public void addTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.add(i1, i2);
 
-			Assertions.assertEquals(Num.add(l1, l2).toString(), tmp.toString());
-			Assertions.assertEquals(toHex(Num.add(l1, l2).getBytes()), tmp.toHex());
+			Assertions.assertEquals(NumList.add(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(toHex(NumList.add(l1, l2).getBytes()), tmp.toHex());
 			Assertions.assertEquals(toHex(l1.getBytes()), i1.toHex());
 			Assertions.assertEquals(toHex(l2.getBytes()), i2.toHex());
 			System.out.println("Test " + i + " add()");
@@ -108,12 +122,12 @@ public class UFatIntTests {
 		long liczba;
 		for (int i = 0; i < this.n; i++) {
 			liczba = rand.nextInt(Integer.MAX_VALUE);
-			l1 = Num.generateOdd(this.len);
+			l1 = NumList.generateOdd(this.len);
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.add(i1, liczba);
 
-			Assertions.assertEquals(Num.add(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.add(l1, liczba).toString(), tmp.toString());
 			Assertions.assertEquals(toHex(l1.getBytes()), i1.toHex());
 			System.out.println("Test " + i + " add()");
 		}
@@ -122,20 +136,20 @@ public class UFatIntTests {
 
 	@Test
 	public void subTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.subtract(i1, i2);
 
-			Assertions.assertEquals(Num.subtract(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.subtract(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " subtract()");
@@ -144,12 +158,12 @@ public class UFatIntTests {
 		long liczba;
 		for (int i = 0; i < this.n; i++) {
 			liczba = rand.nextInt(Integer.MAX_VALUE);
-			l1 = Num.generateOdd(this.len);
+			l1 = NumList.generateOdd(this.len);
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.subtract(i1, liczba);
 
-			Assertions.assertEquals(Num.subtract(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.subtract(l1, liczba).toString(), tmp.toString());
 			Assertions.assertEquals(l1.toString(), i1.toString());
 			System.out.println("Test " + i + " subtract()");
 		}
@@ -157,20 +171,20 @@ public class UFatIntTests {
 
 	@Test
 	public void mulTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.mul(i1, i2);
 
-			Assertions.assertEquals(Num.mul(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.mul(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " mul()");
@@ -179,12 +193,12 @@ public class UFatIntTests {
 		long liczba;
 		for (int i = 0; i < this.n; i++) {
 			liczba = rand.nextInt(Integer.MAX_VALUE);
-			l1 = Num.generateOdd(this.len);
+			l1 = NumList.generateOdd(this.len);
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.mul(i1, liczba);
 
-			Assertions.assertEquals(Num.mul(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.mul(l1, liczba).toString(), tmp.toString());
 			Assertions.assertEquals(l1.toString(), i1.toString());
 			System.out.println("Test " + i + " mul()");
 		}
@@ -192,20 +206,20 @@ public class UFatIntTests {
 
 	@Test
 	public void karatsubaTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.mulKaratsuba(i1, i2);
 
-			Assertions.assertEquals(Num.mulKaratsuba(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.mulKaratsuba(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " mulKaratsuba()");
@@ -214,12 +228,12 @@ public class UFatIntTests {
 		long liczba;
 		for (int i = 0; i < this.n; i++) {
 			liczba = rand.nextInt(Integer.MAX_VALUE);
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.mulKaratsuba(i1, liczba);
 
-			Assertions.assertEquals(Num.mulKaratsuba(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.mulKaratsuba(l1, liczba).toString(), tmp.toString());
 			Assertions.assertEquals(l1.toString(), i1.toString());
 			System.out.println("Test " + i + " mulKaratsuba()");
 		}
@@ -227,20 +241,20 @@ public class UFatIntTests {
 
 	@Test
 	public void divTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.divide(i1, i2);
 
-			Assertions.assertEquals(Num.divide(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.divide(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " divide()");
@@ -249,33 +263,68 @@ public class UFatIntTests {
 		long liczba;
 		for (int i = 0; i < this.n; i++) {
 			liczba = rand.nextInt(Integer.MAX_VALUE);
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.divide(i1, liczba);
 
-			Assertions.assertEquals(Num.divide(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.divide(l1, liczba).toString(), tmp.toString());
 			Assertions.assertEquals(l1.toString(), i1.toString());
 			System.out.println("Test " + i + " divide()");
 		}
 	}
 
 	@Test
-	public void modTest() {
-		Num l1, l2;
+	public void divShiftTest() {
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
+
+			i1 = new UFatInt(l1);
+			i2 = new UFatInt(l2);
+
+			UFatInt tmp = UFatInt.divShift(i1, i2);
+
+			Assertions.assertEquals(NumList.divide(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(i1.toString(), l1.toString());
+			Assertions.assertEquals(i2.toString(), l2.toString());
+			System.out.println("Test " + i + " divShift()");
+		}
+
+		long liczba;
+		for (int i = 0; i < this.n; i++) {
+			liczba = rand.nextInt(Integer.MAX_VALUE);
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			i1 = new UFatInt(l1);
+
+			UFatInt tmp = UFatInt.divShift(i1, liczba);
+
+			Assertions.assertEquals(NumList.divide(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(l1.toString(), i1.toString());
+			System.out.println("Test " + i + " divShift()");
+		}
+	}
+
+	@Test
+	public void modTest() {
+		NumList l1, l2;
+		UFatInt i1, i2;
+		Random rand = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.mod(i1, i2);
 
-			Assertions.assertEquals(Num.mod(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.mod(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " mod()");
@@ -284,12 +333,12 @@ public class UFatIntTests {
 		long liczba;
 		for (int i = 0; i < this.n; i++) {
 			liczba = rand.nextInt(Integer.MAX_VALUE);
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.mod(i1, liczba);
 
-			Assertions.assertEquals(Num.mod(l1, liczba).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.mod(l1, liczba).toString(), tmp.toString());
 			Assertions.assertEquals(l1.toString(), i1.toString());
 			System.out.println("Test " + i + " mod()");
 		}
@@ -300,21 +349,21 @@ public class UFatIntTests {
 		UFatInt i1, i2;
 		Random rand = new Random();
 
-		Num l1, l2;
+		NumList l1, l2;
 
 		for (int i = 0; i < this.n; i++) {
-			int t = rand.nextInt(Integer.MAX_VALUE);
-			Num r1 = new Num(t);
+			int t = rand.nextInt(200);
+			NumList r1 = new NumList(t);
 			UFatInt r2 = new UFatInt(t);
 
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			System.out.println("Test " + i + " modPow()\n 2 ^ " + l1 + " mod " + l2);
-			Num s = Num.modPow(r1, l1, l2);
+			NumList s = NumList.modPow(r1, l1, l2);
 			UFatInt tmp = UFatInt.modPow(r2, i1, i2);
 
 			Assertions.assertEquals(i1.toString(), l1.toString());
@@ -326,19 +375,19 @@ public class UFatIntTests {
 
 	@Test
 	public void gcdTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
 
 			i1 = new UFatInt(l1);
 			i2 = new UFatInt(l2);
 
 			UFatInt tmp = UFatInt.gcd(i1, i2);
 
-			Assertions.assertEquals(Num.gcd(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.gcd(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " gcd()");
@@ -348,14 +397,14 @@ public class UFatIntTests {
 
 	@Test
 	public void modInverseTest() {
-		Num l1, l2;
+		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
-		Num one = new Num(1);
+		NumList one = new NumList(1);
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
-			l2 = Num.generateOdd(rand.nextInt(2, this.len));
-			if (!Num.gcd(l1, l2).equals(one)) {
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
+			l2 = NumList.generateOdd(rand.nextInt(2, this.len));
+			if (!NumList.gcd(l1, l2).equals(one)) {
 				i--;
 				continue;
 			}
@@ -366,7 +415,7 @@ public class UFatIntTests {
 
 			UFatInt tmp = UFatInt.modInverse(i1, i2);
 
-			Assertions.assertEquals(Num.modInverse(l1, l2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.modInverse(l1, l2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			Assertions.assertEquals(i2.toString(), l2.toString());
 			System.out.println("Test " + i + " modInverse()");
@@ -375,19 +424,36 @@ public class UFatIntTests {
 	}
 
 	@Test
+	public void primeTestLow() {
+		UFatInt l1;
+		int i1;
+		Random rand = new Random();
+
+		for (int i = 0; i < this.n; i++) {
+			i1 = rand.nextInt(3, Integer.MAX_VALUE);
+
+			l1 = new UFatInt(i1);
+			System.out.println("Test " + i + " prime(): " + i1);
+			Assertions.assertEquals(isPrime(i1), l1.isPrime());
+			Assertions.assertEquals(String.valueOf(i1), l1.toString());
+		}
+
+	}
+
+	@Test
 	public void fastPowTest() {
-		Num l1;
+		NumList l1;
 		UFatInt i1;
 		long i2;
 		Random rand = new Random();
-		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+		for (int i = 0; i < this.n / 100; i++) {
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
 			i2 = rand.nextLong(1, 30);
 			i1 = new UFatInt(l1);
 
 			UFatInt tmp = UFatInt.fastPow(i1, i2);
 
-			Assertions.assertEquals(Num.fastPow(l1, i2).toString(), tmp.toString());
+			Assertions.assertEquals(NumList.fastPow(l1, i2).toString(), tmp.toString());
 			Assertions.assertEquals(i1.toString(), l1.toString());
 			System.out.println("Test " + i + " fastPow()");
 		}
@@ -453,37 +519,37 @@ public class UFatIntTests {
 	@Test
 	public void timeTestNum() {
 
-		Num x, y;
+		NumList x, y;
 		long start;
 		start = System.currentTimeMillis();
 		for (int i = 0; i < this.n / 10000; i++) {
-			x = Num.randOdd(this.len);
-			y = Num.randOdd(this.len);
-			Num w = Num.add(x, y);
+			x = NumList.randOdd(this.len);
+			y = NumList.randOdd(this.len);
+			NumList w = NumList.add(x, y);
 		}
 		System.out.println("Dodawanie: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
 		for (int i = 0; i < this.n / 10000; i++) {
-			x = Num.randOdd(this.len);
-			y = Num.randOdd(this.len);
-			Num w = Num.subtract(x, y);
+			x = NumList.randOdd(this.len);
+			y = NumList.randOdd(this.len);
+			NumList w = NumList.subtract(x, y);
 		}
 		System.out.println("Odejmowanie: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
 		for (int i = 0; i < this.n / 10000; i++) {
-			x = Num.randOdd(this.len);
-			y = Num.randOdd(this.len);
-			Num w = Num.mul(x, y);
+			x = NumList.randOdd(this.len);
+			y = NumList.randOdd(this.len);
+			NumList w = NumList.mul(x, y);
 		}
 		System.out.println("Mul: " + (System.currentTimeMillis() - start));
 
 		start = System.currentTimeMillis();
 		for (int i = 0; i < this.n / 10000; i++) {
-			x = Num.randOdd(this.len);
-			y = Num.randOdd(this.len);
-			Num w = Num.mulKaratsuba(x, y);
+			x = NumList.randOdd(this.len);
+			y = NumList.randOdd(this.len);
+			NumList w = NumList.mulKaratsuba(x, y);
 		}
 		System.out.println("mulKaratsuba: " + (System.currentTimeMillis() - start));
 
@@ -491,16 +557,16 @@ public class UFatIntTests {
 
 	@Test
 	public void shiftTest() {
-		Num l1;
+		NumList l1;
 		UFatInt i1;
 		int m;
 		Random rand = new Random();
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
 			m = rand.nextInt(2, 100);
 			i1 = new UFatInt(l1);
-			Num w = Num.mulKaratsuba(l1, Num.fastPow(new Num(2), m));
+			NumList w = NumList.mulKaratsuba(l1, NumList.fastPow(new NumList(2), m));
 
 			i1.shiftL(m);
 
@@ -509,10 +575,10 @@ public class UFatIntTests {
 		}
 
 		for (int i = 0; i < this.n; i++) {
-			l1 = Num.generateOdd(rand.nextInt(2, this.len));
+			l1 = NumList.generateOdd(rand.nextInt(2, this.len));
 			m = rand.nextInt(2, 100);
 			i1 = new UFatInt(l1);
-			Num w = Num.divide(l1, Num.fastPow(new Num(2), m));
+			NumList w = NumList.divide(l1, NumList.fastPow(new NumList(2), m));
 
 			i1.shiftR(m);
 
@@ -524,11 +590,6 @@ public class UFatIntTests {
 
 	@Test
 	public void algoTest() {
-		UFatInt s = new UFatInt(79);
-		UFatInt t = new UFatInt(3);
-
-		UFatInt w = UFatInt.mulKaratsuba(s, t);
-		System.out.println("W = " + w);
 
 	}
 
