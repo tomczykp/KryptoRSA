@@ -117,18 +117,19 @@ public class MenuController {
 		if (Objects.equals(this.cipherText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
 
-		UFatInt[] privKeyData = Converter.decode(this.privKey.getText());
+		UFatInt[] privKeyData = Converter.splitToNums(
+				Base64.getDecoder().decode(this.privKey.getText()),
+				this.numBits.getValue());
 		UFatInt[] cipherTextData = Converter.splitToNums(
 				Base64.getDecoder().decode(this.cipherText.getText()),
-				this.numBits.getValue() / 8
-		);
+				this.numBits.getValue());
 
 		UFatInt[] nums = this.szyfr.decrypt(cipherTextData, privKeyData);
 
 		System.out.println("Odczytane: " + Arrays.toString(cipherTextData));
 		System.out.println("Priv: " + Arrays.toString(privKeyData) + ", obliczone: " + Arrays.toString(nums));
 
-		byte[] data = Converter.compactNums(nums);
+		byte[] data = Converter.compactNums(nums, this.numBits.getValue());
 		String tmp = new String(data);
 
 		if (tmp.matches("[^\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]+")) {
@@ -145,18 +146,21 @@ public class MenuController {
 		if (Objects.equals(this.plainText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
 
-		UFatInt[] pubKeyData = Converter.decode(this.pubKey.getText());
+		UFatInt[] pubKeyData = Converter.splitToNums(
+				Base64.getDecoder().decode(this.pubKey.getText()),
+				this.numBits.getValue());
+
 		UFatInt[] plainTextData = Converter.splitToNums(
 				this.plainText.getText().getBytes(),
-				this.numBits.getValue() / 8
-		);
+				this.numBits.getValue());
 
 		UFatInt[] nums = this.szyfr.encrypt(plainTextData, pubKeyData);
 
 		System.out.println("Odczytane: " + Arrays.toString(plainTextData));
 		System.out.println("Pub: " + Arrays.toString(pubKeyData) + ", obliczone: " + Arrays.toString(nums));
 
-		this.cipherText.setText(Base64.getEncoder().encodeToString(Converter.compactNums(nums)));
+		this.cipherText.setText(Base64.getEncoder().encodeToString(Converter.compactNums(nums,
+				this.numBits.getValue())));
 	}
 
 	public void showStage() {
@@ -172,8 +176,8 @@ public class MenuController {
 		UFatInt[][] tmp = this.szyfr.genKey(len);
 		System.out.println("Generowanie trwało: " + (System.currentTimeMillis() - start));
 
-		this.privKey.setText(Converter.encode(tmp[0]));
-		this.pubKey.setText(Converter.encode(tmp[1]));
+		this.privKey.setText(Base64.getEncoder().encodeToString(Converter.compactNums(tmp[0], len)));
+		this.pubKey.setText(Base64.getEncoder().encodeToString(Converter.compactNums(tmp[1], len)));
 	}
 
 	public void saveKey(String data) {

@@ -34,20 +34,21 @@ public class AlgorytmRSA implements Szyfr {
 
 		UFatInt one = new UFatInt(1);
 		UFatInt p, q;
+		int pSize = len / 16;
 
 		do {
-			p = UFatInt.randOdd(len / 2);
-			System.out.println("Trying p");
+			p = UFatInt.randOdd(pSize);
+			System.out.println("Trying p: " + p.toHex());
 		} while (!p.isPrime());
 
 		do {
-			q = UFatInt.randOdd(len / 2);
-			System.out.println("Trying q");
+			q = UFatInt.randOdd(pSize);
+			System.out.println("Trying q: " + q.toHex());
 		} while (!q.isPrime());
 
 		while (q.equals(p)) {
 			do {
-				p = UFatInt.randOdd(len / 2);
+				p = UFatInt.randOdd(pSize);
 			} while (!p.isPrime());
 		}
 
@@ -60,12 +61,13 @@ public class AlgorytmRSA implements Szyfr {
 
 		UFatInt e;
 		do {
-			e = UFatInt.generateUpTo(fi);
+			e = UFatInt.randOdd(fi.len());
 		} while (!UFatInt.gcd(e, fi).equals(one));
 
 		UFatInt d = UFatInt.modInverse(e, fi);
 
 		System.out.println("\tn = " + n + "\n\td = " + d + "\n\te = " + e);
+		System.out.println("\tn = " + n.len() + "\n\td = " + d.len() + "\n\te = " + e.len());
 
 
 		return new UFatInt[][]{{e, n}, {d, n}};

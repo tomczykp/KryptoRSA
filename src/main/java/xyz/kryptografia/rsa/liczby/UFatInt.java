@@ -80,67 +80,6 @@ public class UFatInt implements Comparable<UFatInt> {
 		this.liczba = tmp;
 	}
 
-	public static UFatInt randOdd(int n) {
-		Random rand = new Random();
-		byte[] bytes = new byte[n];
-		rand.nextBytes(bytes);
-
-		bytes[0] = (byte) (bytes[0] | 0x01);
-		bytes[bytes.length - 1] = (byte) (bytes[bytes.length - 1] | 0x80);
-
-		return new UFatInt(bytes);
-	}
-
-	public static UFatInt generateUpTo(UFatInt l) {
-		return UFatInt.randOdd(l.getBitSize() / 8);
-	}
-
-	public boolean testRabinMiller() {
-
-		if (this.compareTo(new UFatInt(3)) < 0)
-			return true;
-
-		UFatInt one = new UFatInt(1);
-		UFatInt two = new UFatInt(2);
-
-		UFatInt p_1 = UFatInt.subOneOdd(this);
-		UFatInt cp = new UFatInt(p_1);
-
-		int k = 0;
-		while ((cp.get(k / 8) & (1 << k % 8)) == 0)
-			k++;
-
-		UFatInt a = UFatInt.generateUpTo(p_1);
-		UFatInt m = new UFatInt(p_1).shiftR(k);
-		UFatInt x = UFatInt.modPow(a, m, this);
-
-		if (x.equals(p_1) || x.equals(one))
-			return true;
-
-		for (int i = 0; i < k - 1; i++) {
-//			x = UFatInt.modPow(x, two, this);
-			x = UFatInt.mulKaratsuba(x, x);
-			x = UFatInt.mod(x, this);
-
-			if (x.equals(one))
-				return false;
-
-			else if (x.equals(p_1))
-				return true;
-		}
-
-		return false;
-	}
-
-	public boolean isPrime() {
-
-		for (int i = 0; i < 5; i++)
-			if (!this.testRabinMiller())
-				return false;
-
-		return true;
-	}
-
 	// ##########################
 	// #   METODY MATEMATYCZNE  #
 	// ##########################
@@ -529,6 +468,12 @@ public class UFatInt implements Comparable<UFatInt> {
 		return res;
 	}
 
+	public static UFatInt subOneOdd(UFatInt x) {
+		UFatInt l = new UFatInt(x);
+		l.liczba.set(0, (byte) (l.liczba.get(0) & 0xfe));
+
+		return l;
+	}
 
 	// ##########################
 	// #   METODY NARZĘDZIOWE   #
@@ -657,11 +602,11 @@ public class UFatInt implements Comparable<UFatInt> {
 		return this;
 	}
 
-	public boolean isOdd() {
+	private boolean isOdd() {
 		return ((this.liczba.get(0) & 0x01) == 1);
 	}
 
-	public boolean isZero() {
+	private boolean isZero() {
 		return (this.liczba.size() == 1 && this.get(0) == 0);
 	}
 
@@ -717,11 +662,66 @@ public class UFatInt implements Comparable<UFatInt> {
 		return s + i + 1;
 	}
 
-	public static UFatInt subOneOdd(UFatInt x) {
-		UFatInt l = new UFatInt(x);
-		l.liczba.set(0, (byte) (l.liczba.get(0) & 0xfe));
+	public int len() {
+		return this.removeLeadingZeros().liczba.size();
+	}
 
-		return l;
+	public static UFatInt randOdd(int n) {
+		Random rand = new Random();
+		byte[] bytes = new byte[n];
+		rand.nextBytes(bytes);
+
+		bytes[0] = (byte) (bytes[0] | 0x01);
+		bytes[bytes.length - 1] = (byte) (bytes[bytes.length - 1] | 0x80);
+
+		return new UFatInt(bytes);
+	}
+
+	public static UFatInt generateUpTo(UFatInt l) {
+		return UFatInt.randOdd(l.getBitSize() / 8);
+	}
+
+	public boolean testRabinMiller() {
+
+		if (this.compareTo(new UFatInt(3)) < 0)
+			return true;
+
+		UFatInt one = new UFatInt(1);
+		UFatInt two = new UFatInt(2);
+
+		UFatInt p_1 = UFatInt.subOneOdd(this);
+		UFatInt cp = new UFatInt(p_1);
+
+		int k = 0;
+		while ((cp.get(k / 8) & (1 << k % 8)) == 0)
+			k++;
+
+		UFatInt a = UFatInt.generateUpTo(p_1);
+		UFatInt m = new UFatInt(p_1).shiftR(k);
+		UFatInt x = UFatInt.modPow(a, m, this);
+
+		if (x.equals(p_1) || x.equals(one))
+			return true;
+
+		for (int i = 0; i < k - 1; i++) {
+			x = UFatInt.modPow(x, two, this);
+			if (x.equals(one))
+				return false;
+
+			else if (x.equals(p_1))
+				return true;
+		}
+
+		return false;
+	}
+
+	public boolean isPrime() {
+
+		for (int i = 0; i < 1; i++)
+			if (!this.testRabinMiller())
+				return false;
+
+		return true;
 	}
 
 }
