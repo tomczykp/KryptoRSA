@@ -176,6 +176,8 @@ public class MenuController {
 		UFatInt[][] tmp = this.szyfr.genKey(len);
 		System.out.println("Generowanie trwało: " + (System.currentTimeMillis() - start));
 
+		System.out.println("Priv: " + Arrays.toString(tmp[0]));
+		System.out.println("Pub: " + Arrays.toString(tmp[1]));
 		this.privKey.setText(Base64.getEncoder().encodeToString(Converter.compactNums(tmp[0], len)));
 		this.pubKey.setText(Base64.getEncoder().encodeToString(Converter.compactNums(tmp[1], len)));
 	}

@@ -13,8 +13,8 @@ public class Converter {
 		if (data.length % size != 0)
 			n++;
 
-		System.out.println("nums = " + n);
-		System.out.println("bytes to encode = " + data.length);
+		System.out.println("nums:" + n);
+		System.out.println("bytes: " + data.length);
 		UFatInt[] wynik = new UFatInt[n];
 		for (int i = 0; i < n; i++) {
 			byte[] b = new byte[size];
@@ -25,38 +25,42 @@ public class Converter {
 				else
 //					b[j] = 0;
 					break;
-				
+
 			wynik[i] = new UFatInt(b);
 		}
 
 		return wynik;
 	}
 
-	public static byte[] compactNums(UFatInt[] nums, int n) {
-		n /= 8;
-		byte[][] bytes = new byte[nums.length][];
-		int size = 0;
-		for (int i = 0; i < nums.length; i++) {
-//			int j = 0;
-//			for (byte b : nums[i].getBytes())
-//				bytes[i][j++] = b;
-			bytes[i] = nums[i].getBytes();
-			size += bytes[i].length;
+	public static byte[] compactNums(UFatInt[] nums, int size) {
+		size /= 8;
+		byte[] wynik = new byte[nums.length * (size)];
 
-			if (bytes[i].length != n) {
-				System.out.println("Pobrano z liczby: " + bytes[i].length);
-//				bytes[i][j] = (byte) 0;
-			}
+		for (int i = 0; i < nums.length; i++) {
+			byte[] b = nums[i].getBytes();
+			for (int j = 0; j < size && j < b.length; j++)
+				wynik[i * size + j] = b[j];
 		}
 
-		byte[] wynik = new byte[size];
-		size = 0;
-		for (byte[] aByte : bytes)
-			for (byte b : aByte)
-				wynik[size++] = b;
 
+		// usuwanie trailing zeros
+		int len = 0;
+		for (int i = wynik.length - 1; i >= 0; i--) {
+			if (wynik[i] == 0)
+				len++;
+			else
+				break;
+		}
 
-		return wynik;
+		if (len == 0)
+			return wynik;
+
+		System.out.println("Trailing 0 to remove: " + len);
+		byte[] w = new byte[wynik.length - len];
+		if (wynik.length - len >= 0)
+			System.arraycopy(wynik, 0, w, 0, wynik.length - len);
+
+		return w;
 	}
 
 }

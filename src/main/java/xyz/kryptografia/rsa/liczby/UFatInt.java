@@ -508,8 +508,8 @@ public class UFatInt implements Comparable<UFatInt> {
 
 	@Override
 	public String toString() {
-//		return this.toHex();
-		return new NumList(this.getBytes()).toString();
+		return this.toHex();
+//		return new NumList(this.getBytes()).toString();
 	}
 
 	@Override
@@ -717,7 +717,7 @@ public class UFatInt implements Comparable<UFatInt> {
 
 	public boolean isPrime() {
 
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 5; i++)
 			if (!this.testRabinMiller())
 				return false;
 

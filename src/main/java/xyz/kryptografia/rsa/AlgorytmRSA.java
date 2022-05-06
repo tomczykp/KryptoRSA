@@ -4,9 +4,7 @@ import xyz.kryptografia.rsa.liczby.UFatInt;
 
 public class AlgorytmRSA implements Szyfr {
 
-	public AlgorytmRSA() {
-		super();
-	}
+	public AlgorytmRSA() {}
 
 	@Override
 	public UFatInt[] encrypt(UFatInt[] plainText, UFatInt[] pubKey) {
@@ -49,6 +47,7 @@ public class AlgorytmRSA implements Szyfr {
 		while (q.equals(p)) {
 			do {
 				p = UFatInt.randOdd(pSize);
+				System.out.println("Got the same nums, trying new p: " + p.toHex());
 			} while (!p.isPrime());
 		}
 
@@ -70,7 +69,7 @@ public class AlgorytmRSA implements Szyfr {
 		System.out.println("\tn = " + n.len() + "\n\td = " + d.len() + "\n\te = " + e.len());
 
 
-		return new UFatInt[][]{{e, n}, {d, n}};
+		return new UFatInt[][]{{d, n}, {e, n}};
 	}
 
 

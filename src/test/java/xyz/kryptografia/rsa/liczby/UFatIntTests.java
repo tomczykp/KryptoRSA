@@ -591,6 +591,19 @@ public class UFatIntTests {
 	@Test
 	public void algoTest() {
 
+		UFatInt e = new UFatInt(new NumList("9749209442300188085"));
+		UFatInt d = new UFatInt(new NumList("147415365464702919742613307226325408573"));
+		UFatInt n = new UFatInt(new NumList("273523274130512590397975405396105494153"));
+		System.out.println("priv = " + d);
+		System.out.println("pub = " + e);
+		System.out.println("n = " + n);
+
+		UFatInt msg = new UFatInt(0x90);
+		UFatInt cipherText = UFatInt.modPow(msg, e, n);
+		System.out.println("msg = " + msg);
+		System.out.println("Decrypted = " + UFatInt.modPow(cipherText, d, n));
+		System.out.println("encrypted = " + cipherText);
+
 	}
 
 
