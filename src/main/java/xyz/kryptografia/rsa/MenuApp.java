@@ -2,10 +2,6 @@ package xyz.kryptografia.rsa;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import xyz.kryptografia.rsa.liczby.UFatInt;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 public class MenuApp extends Application {
 

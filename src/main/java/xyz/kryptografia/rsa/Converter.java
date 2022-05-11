@@ -2,11 +2,9 @@ package xyz.kryptografia.rsa;
 
 import xyz.kryptografia.rsa.liczby.UFatInt;
 
-import java.util.Base64;
-
 public class Converter {
 
-	public static UFatInt[] splitToNums(byte[] data, int size) {
+	public static UFatInt[] splitToNums (byte[] data, int size) {
 		size /= 8;
 		int n = data.length / size;
 
@@ -32,7 +30,7 @@ public class Converter {
 		return wynik;
 	}
 
-	public static byte[] compactNums(UFatInt[] nums, int size) {
+	public static byte[] compactNums (UFatInt[] nums, int size) {
 		size /= 8;
 		byte[] wynik = new byte[nums.length * (size)];
 

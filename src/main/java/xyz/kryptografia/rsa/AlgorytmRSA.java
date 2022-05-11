@@ -4,20 +4,20 @@ import xyz.kryptografia.rsa.liczby.UFatInt;
 
 public class AlgorytmRSA implements Szyfr {
 
-	public AlgorytmRSA() {}
+	public AlgorytmRSA () {}
 
 	@Override
-	public UFatInt[] encrypt(UFatInt[] plainText, UFatInt[] pubKey) {
+	public UFatInt[] encrypt (UFatInt[] plainText, UFatInt[] pubKey) {
 		return this.crypt(plainText, pubKey);
 	}
 
 	@Override
-	public UFatInt[] decrypt(UFatInt[] cipherText, UFatInt[] privKey) {
+	public UFatInt[] decrypt (UFatInt[] cipherText, UFatInt[] privKey) {
 		return this.crypt(cipherText, privKey);
 	}
 
 	@Override
-	public UFatInt[] crypt(UFatInt[] text, UFatInt[] keys) {
+	public UFatInt[] crypt (UFatInt[] text, UFatInt[] keys) {
 		int l = text.length;
 		UFatInt[] wynik = new UFatInt[l];
 
@@ -27,8 +27,9 @@ public class AlgorytmRSA implements Szyfr {
 		return wynik;
 	}
 
+
 	@Override
-	public UFatInt[][] genKey(int len) {
+	public UFatInt[][] genKey (int len) {
 
 		UFatInt one = new UFatInt(1);
 		UFatInt p, q;
@@ -54,9 +55,7 @@ public class AlgorytmRSA implements Szyfr {
 		UFatInt n = UFatInt.mulKaratsuba(p, q);
 		UFatInt fi = UFatInt.mulKaratsuba(
 				UFatInt.subOneOdd(p),
-				UFatInt.subOneOdd(q)
-		);
-
+				UFatInt.subOneOdd(q));
 
 		UFatInt e;
 		do {

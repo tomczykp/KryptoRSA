@@ -10,7 +10,7 @@ public class UFatIntTests {
 	int n = 2000;
 	int len = 100;
 
-	public static boolean isPrime(int n) {
+	public static boolean isPrime (int n) {
 		// Corner case
 		if (n <= 1)
 			return false;
@@ -24,7 +24,7 @@ public class UFatIntTests {
 	}
 
 
-	public String toHex(byte[] bytes) {
+	public String toHex (byte[] bytes) {
 		String sb = "";
 		for (byte b : bytes)
 			sb = String.format("%02X ", b) + sb;
@@ -34,7 +34,7 @@ public class UFatIntTests {
 
 
 	@Test
-	public void constructoTest() {
+	public void constructoTest () {
 		NumList n1, n2;
 		UFatInt f1, f2;
 		Random r = new Random();
@@ -57,7 +57,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void comparatorTest() {
+	public void comparatorTest () {
 
 		NumList l1, l2;
 		UFatInt i1, i2;
@@ -98,7 +98,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void addTest() {
+	public void addTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -135,7 +135,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void subTest() {
+	public void subTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -170,7 +170,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void mulTest() {
+	public void mulTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -205,7 +205,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void karatsubaTest() {
+	public void karatsubaTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -240,7 +240,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void divTest() {
+	public void divTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -275,7 +275,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void divShiftTest() {
+	public void divShiftTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -310,7 +310,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void modTest() {
+	public void modTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -345,7 +345,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void modPowTest() {
+	public void modPowTest () {
 		UFatInt i1, i2;
 		Random rand = new Random();
 
@@ -374,7 +374,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void gcdTest() {
+	public void gcdTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -396,7 +396,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void modInverseTest() {
+	public void modInverseTest () {
 		NumList l1, l2;
 		UFatInt i1, i2;
 		Random rand = new Random();
@@ -424,7 +424,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void primeTestLow() {
+	public void primeTestLow () {
 		UFatInt l1;
 		int i1;
 		Random rand = new Random();
@@ -441,7 +441,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void fastPowTest() {
+	public void fastPowTest () {
 		NumList l1;
 		UFatInt i1;
 		long i2;
@@ -461,7 +461,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void timeTest() {
+	public void timeTest () {
 
 		UFatInt x, y;
 		Random r = new Random();
@@ -517,7 +517,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void timeTestNum() {
+	public void timeTestNum () {
 
 		NumList x, y;
 		long start;
@@ -556,7 +556,7 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void shiftTest() {
+	public void shiftTest () {
 		NumList l1;
 		UFatInt i1;
 		int m;
@@ -589,11 +589,12 @@ public class UFatIntTests {
 	}
 
 	@Test
-	public void algoTest() {
+	public void algoTest () {
 
 		UFatInt e = new UFatInt(new NumList("9749209442300188085"));
 		UFatInt d = new UFatInt(new NumList("147415365464702919742613307226325408573"));
 		UFatInt n = new UFatInt(new NumList("273523274130512590397975405396105494153"));
+
 		System.out.println("priv = " + d);
 		System.out.println("pub = " + e);
 		System.out.println("n = " + n);
