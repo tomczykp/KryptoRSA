@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
@@ -65,7 +66,7 @@ public class MenuController {
 	@FXML
 	private Button decryptButton;
 
-	public MenuController() {
+	public MenuController () {
 
 		this.window = new Stage();
 		this.szyfr = new AlgorytmRSA();
@@ -112,7 +113,7 @@ public class MenuController {
 		}
 	}
 
-	private void decrypt() {
+	private void decrypt () {
 		System.out.println("\nDECRYPT");
 		if (Objects.equals(this.cipherText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
@@ -141,7 +142,7 @@ public class MenuController {
 		}
 	}
 
-	private void encrypt() {
+	private void encrypt () {
 		System.out.println("\nENCRYPT");
 		if (Objects.equals(this.plainText.getText(), "") || Objects.equals(this.pubKey.getText(), ""))
 			return;
@@ -150,8 +151,12 @@ public class MenuController {
 				Base64.getDecoder().decode(this.pubKey.getText()),
 				this.numBits.getValue());
 
+		byte[] b = this.plainText.getText().getBytes();
+		if (this.isBased.contains("base64")) {
+			b = Base64.getDecoder().decode(b);
+		}
 		UFatInt[] plainTextData = Converter.splitToNums(
-				this.plainText.getText().getBytes(),
+				b,
 				this.numBits.getValue());
 
 		UFatInt[] nums = this.szyfr.encrypt(plainTextData, pubKeyData);
@@ -163,11 +168,11 @@ public class MenuController {
 				this.numBits.getValue())));
 	}
 
-	public void showStage() {
+	public void showStage () {
 		this.window.show();
 	}
 
-	public void genKey() {
+	public void genKey () {
 
 		int len = this.numBits.getValue();
 		System.out.println("Ilość bitów: " + len);
@@ -182,7 +187,7 @@ public class MenuController {
 		this.pubKey.setText(Base64.getEncoder().encodeToString(Converter.compactNums(tmp[1], len)));
 	}
 
-	public void saveKey(String data) {
+	public void saveKey (String data) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save file");
 		File file = fileChooser.showSaveDialog(this.window);
@@ -196,7 +201,7 @@ public class MenuController {
 		}
 	}
 
-	public String loadKey() {
+	public String loadKey () {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open file");
 		File file = fileChooser.showOpenDialog(this.window);
@@ -211,7 +216,7 @@ public class MenuController {
 		}
 	}
 
-	public String loadPlainText() {
+	public String loadPlainText () {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open file");
 		File file = fileChooser.showOpenDialog(this.window);
@@ -235,7 +240,7 @@ public class MenuController {
 		}
 	}
 
-	private String loadCipherText() {
+	private String loadCipherText () {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open file");
 		File file = fileChooser.showOpenDialog(this.window);
@@ -249,7 +254,7 @@ public class MenuController {
 		}
 	}
 
-	public void saveCipherText() {
+	public void saveCipherText () {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save file");
 		File file = fileChooser.showSaveDialog(this.window);
@@ -264,7 +269,7 @@ public class MenuController {
 		}
 	}
 
-	public void savePlainText() {
+	public void savePlainText () {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save file");
 		File file = fileChooser.showSaveDialog(this.window);
