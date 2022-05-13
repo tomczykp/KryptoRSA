@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
@@ -151,12 +150,8 @@ public class MenuController {
 				Base64.getDecoder().decode(this.pubKey.getText()),
 				this.numBits.getValue());
 
-		byte[] b = this.plainText.getText().getBytes();
-		if (this.isBased.contains("base64")) {
-			b = Base64.getDecoder().decode(b);
-		}
 		UFatInt[] plainTextData = Converter.splitToNums(
-				b,
+				this.plainText.getText().getBytes(),
 				this.numBits.getValue());
 
 		UFatInt[] nums = this.szyfr.encrypt(plainTextData, pubKeyData);
